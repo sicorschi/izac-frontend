@@ -15,4 +15,5 @@ export class App {
   protected readonly copyright = signal('izac');
   protected readonly robots = signal('index, follow');
   protected readonly viewport = signal('width=device-width, initial-scale=1.0');
+  protected readonly themeColor = signal('#ffffff');
 }
