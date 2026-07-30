@@ -11,4 +11,5 @@ export class App {
   protected readonly title = signal('izac-frontend');
   protected readonly description = signal('platform to manage your izac');
   protected readonly keywords = signal('izac, izac-frontend, izac-frontend-angular, izac-frontend-angular-vite');
+  protected readonly author = signal('izac');
 }
