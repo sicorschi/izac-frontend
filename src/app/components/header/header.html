@@ -1,0 +1,56 @@
+<mat-toolbar color="primary" class="topbar">
+  <div class="brand-wrap">
+    <div class="brand-mark" aria-label="Application logo">
+      <mat-icon>{{ icon }}</mat-icon>
+    </div>
+    <span class="brand-name">{{ headerTitle }}</span>
+  </div>
+
+  <nav class="nav-links" aria-label="Main navigation">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Dashboard
+    </a>
+
+    <a
+      mat-button
+      routerLink="/devices"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Devices
+    </a>
+
+     <a
+      mat-button
+      routerLink="/sensors"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Sensors
+    </a>
+
+    <a
+      mat-button
+      routerLink="/infrastructures"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Infrastructures
+    </a>
+
+    <a
+      mat-button
+      routerLink="/builders"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Builders
+    </a>
+
+  </nav>
+</mat-toolbar>
