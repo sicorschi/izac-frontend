@@ -1,0 +1,52 @@
+<div class="login-shell">
+  <mat-card class="login-card" appearance="outlined">
+    <div class="login-header">
+      <div class="brand-mark" aria-label="App logo">
+        <mat-icon>lock</mat-icon>
+      </div>
+
+      <div class="header-copy">
+        <p class="eyebrow">Mr. Anderson, Welcome back! We missed you.</p>
+      </div>
+    </div>
+
+    <form class="login-form" (ngSubmit)="login()">
+      <mat-form-field appearance="outline">
+        <mat-label>Username</mat-label>
+        <input
+          id="username"
+          matInput
+          [(ngModel)]="username"
+          name="username"
+          type="text"
+          autocomplete="username"
+          aria-label="Username"
+          placeholder="Enter your username"
+          required
+        />
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input
+          id="password"
+          matInput
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          aria-label="Password"
+          placeholder="Enter your password"
+          required
+        />
+        <mat-icon matSuffix>vpn_key</mat-icon>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" class="login-button">
+        <mat-icon>login</mat-icon>
+        Login
+      </button>
+    </form>
+  </mat-card>
+</div>
