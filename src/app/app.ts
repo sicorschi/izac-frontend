@@ -9,11 +9,4 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('izac-frontend');
-  protected readonly description = signal('platform to manage your izac');
-  protected readonly keywords = signal('izac, izac-frontend, izac-frontend-angular, izac-frontend-angular-vite');
-  protected readonly author = signal('izac');
-  protected readonly copyright = signal('izac');
-  protected readonly robots = signal('index, follow');
-  protected readonly viewport = signal('width=device-width, initial-scale=1.0');
-  protected readonly themeColor = signal('#ffffff');
 }
