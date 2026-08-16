@@ -1,1 +1,192 @@
-<p>devices works!</p>
+<mat-drawer-container class="devices-layout" autosize>
+  <mat-drawer #drawer class="device-drawer" mode="over" position="end">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">Add specifications</p>
+        <h2>New IoT device</h2>
+      </div>
+      <button mat-icon-button type="button" aria-label="Close form" (click)="drawer.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form class="device-form" (ngSubmit)="addDevice(); drawer.close()">
+      <mat-form-field appearance="outline">
+        <mat-label id="device-name-label">Device name</mat-label>
+        <input
+          id="device-name"
+          matInput
+          [(ngModel)]="newDevice.name"
+          name="name"
+          aria-labelledby="device-name-label"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="device-type-label">Device type</mat-label>
+        <mat-select
+          id="device-type"
+          [(ngModel)]="newDevice.type"
+          name="type"
+          aria-labelledby="device-type-label"
+        >
+          <mat-option value="Gateway">Gateway</mat-option>
+          <mat-option value="Sensor">Sensor</mat-option>
+          <mat-option value="Controller">Controller</mat-option>
+          <mat-option value="Meter">Meter</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="device-status-label">Status</mat-label>
+        <mat-select
+          id="device-status"
+          [(ngModel)]="newDevice.status"
+          name="status"
+          aria-labelledby="device-status-label"
+        >
+          <mat-option value="online">Online</mat-option>
+          <mat-option value="warning">Warning</mat-option>
+          <mat-option value="offline">Offline</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="device-location-label">Location</mat-label>
+        <input
+          id="device-location"
+          matInput
+          [(ngModel)]="newDevice.location"
+          name="location"
+          aria-labelledby="device-location-label"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="device-ip-label">IP address</mat-label>
+        <input
+          id="device-ip"
+          matInput
+          [(ngModel)]="newDevice.ip"
+          name="ip"
+          aria-labelledby="device-ip-label"
+          required
+        />
+      </mat-form-field>
+
+      <div class="two-column">
+        <mat-form-field appearance="outline">
+          <mat-label id="device-uptime-label">Uptime</mat-label>
+          <input
+            id="device-uptime"
+            matInput
+            [(ngModel)]="newDevice.uptime"
+            name="uptime"
+            aria-labelledby="device-uptime-label"
+            placeholder="98.0%"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label id="device-temperature-label">Temperature</mat-label>
+          <input
+            id="device-temperature"
+            matInput
+            [(ngModel)]="newDevice.temperature"
+            name="temperature"
+            aria-labelledby="device-temperature-label"
+            placeholder="32°C"
+          />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="device-version-label">Version</mat-label>
+        <input
+          id="device-version"
+          matInput
+          [(ngModel)]="newDevice.version"
+          name="version"
+          aria-labelledby="device-version-label"
+          placeholder="v1.0.0"
+        />
+      </mat-form-field>
+
+      <div class="drawer-actions">
+        <button mat-stroked-button type="button" (click)="drawer.close()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit">Save device</button>
+      </div>
+    </form>
+  </mat-drawer>
+
+  <mat-drawer-content class="page-content">
+    <button mat-flat-button color="primary" class="add-button" (click)="drawer.open()">
+      <mat-icon>add</mat-icon>
+      New device
+    </button>
+
+    <section class="summary-grid" aria-label="Device overview">
+      <article class="summary-card">
+        <span class="summary-label">Total devices</span>
+        <strong>{{ devices.length }}</strong>
+      </article>
+      <article class="summary-card summary-card-online">
+        <span class="summary-label">Online</span>
+        <strong>{{ devices.filter((device) => device.status === 'online').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-offline">
+        <span class="summary-label">Offline</span>
+        <strong>{{ devices.filter((device) => device.status === 'offline').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-alerts">
+        <span class="summary-label">Alerts</span>
+        <strong>{{ devices.filter((device) => device.status === 'warning').length }}</strong>
+      </article>
+    </section>
+
+    <section class="devices-grid">
+      @for (device of devices; track device.id) {
+        <mat-card class="device-card" appearance="raised">
+          <div class="card-head">
+            <div>
+              <p class="card-type">{{ device.type }}</p>
+              <h3>{{ device.name }}</h3>
+            </div>
+            <span [class]="getStatusClass(device.status)">{{ device.status }}</span>
+          </div>
+
+          <mat-card-content>
+            <dl class="device-meta">
+              <div>
+                <dt>Location</dt>
+                <dd>{{ device.location }}</dd>
+              </div>
+              <div>
+                <dt>IP</dt>
+                <dd>{{ device.ip }}</dd>
+              </div>
+              <div>
+                <dt>Uptime</dt>
+                <dd>{{ device.uptime }}</dd>
+              </div>
+              <div>
+                <dt>Temp</dt>
+                <dd>{{ device.temperature }}</dd>
+              </div>
+              <div>
+                <dt>Version</dt>
+                <dd>{{ device.version }}</dd>
+              </div>
+            </dl>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary" type="button">Details</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </section>
+  </mat-drawer-content>
+</mat-drawer-container>

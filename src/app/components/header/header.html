@@ -1,56 +1,53 @@
 <mat-toolbar color="primary" class="topbar">
-  <div class="brand-wrap">
-    <div class="brand-mark" aria-label="Application logo">
-      <mat-icon>{{ icon }}</mat-icon>
-    </div>
-    <span class="brand-name">{{ headerTitle }}</span>
-  </div>
-
-  <nav class="nav-links" aria-label="Main navigation">
-    <a
-      mat-button
-      routerLink="/"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Dashboard
-    </a>
-
-    <a
-      mat-button
-      routerLink="/devices"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Devices
-    </a>
-
-     <a
-      mat-button
-      routerLink="/sensors"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Sensors
-    </a>
-
-    <a
-      mat-button
-      routerLink="/infrastructures"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Infrastructures
-    </a>
-
-    <a
-      mat-button
-      routerLink="/builders"
-      routerLinkActive="active-link"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Builders
-    </a>
-
+  <nav class="nav-links desktop-nav" aria-label="Main navigation">
+    @for (item of navItems; track item.route) {
+      <a
+        mat-button
+        [routerLink]="item.route"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
   </nav>
+
+  <button
+    mat-icon-button
+    type="button"
+    class="menu-button"
+    aria-label="Open navigation menu"
+    (click)="toggleDrawer()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
 </mat-toolbar>
+
+<mat-drawer-container class="drawer-shell" autosize>
+  <mat-drawer #drawer class="mobile-drawer" mode="over" position="end">
+    <div class="drawer-header">
+      <h2>Navigation</h2>
+      <button mat-icon-button type="button" aria-label="Close navigation" (click)="closeDrawer()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <nav class="drawer-nav" aria-label="Mobile navigation">
+      @for (item of navItems; track item.route) {
+        <a
+          mat-button
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeDrawer()"
+        >
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+  </mat-drawer>
+
+  <mat-drawer-content></mat-drawer-content>
+</mat-drawer-container>
