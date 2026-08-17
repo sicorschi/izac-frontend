@@ -3,14 +3,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 export enum HeaderIcons {
-  Home = 'category',
+  Home = 'dashboard',
   Devices = 'devices',
-  Sensors = 'wifi_tethering',
+  Sensors = 'thermostat',
   Infrastructures = 'device_hub',
-  Builders = 'memory',
+  Builders = 'precision_manufacturing',
 }
 
 @Component({
@@ -34,12 +34,37 @@ export class HeaderComponent {
     { label: 'Builders', route: '/builders', icon: HeaderIcons.Builders },
   ];
 
+  currentNavItem = this.navItems[0];
+
+  constructor(private router: Router) {
+    this.updateCurrentRoute(this.router.url);
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.updateCurrentRoute(event.urlAfterRedirects);
+      }
+    });
+  }
+
   closeDrawer(): void {
     this.drawer?.close();
   }
 
   toggleDrawer(): void {
     this.drawer?.toggle();
+  }
+
+  private updateCurrentRoute(url: string): void {
+    const normalizedUrl = url.split('?')[0].split('#')[0] || '/';
+    const match = this.navItems.find((item) => {
+      if (item.route === '/' && (normalizedUrl === '/' || normalizedUrl === '')) {
+        return true;
+      }
+
+      return item.route === normalizedUrl;
+    });
+
+    this.currentNavItem = match ?? this.navItems[0];
   }
 }
 
