@@ -1,1 +1,192 @@
-<p>sensors works!</p>
+<mat-drawer-container class="sensors-layout" autosize>
+  <mat-drawer #drawer class="sensor-drawer" mode="over" position="end">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">Add specifications</p>
+        <h2>New sensor</h2>
+      </div>
+      <button mat-icon-button type="button" aria-label="Close form" (click)="drawer.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form class="sensor-form" (ngSubmit)="addSensor(); drawer.close()">
+      <mat-form-field appearance="outline">
+        <mat-label id="sensor-name-label">Sensor name</mat-label>
+        <input
+          id="sensor-name"
+          matInput
+          [(ngModel)]="newSensor.name"
+          name="name"
+          aria-labelledby="sensor-name-label"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="sensor-type-label">Sensor type</mat-label>
+        <mat-select
+          id="sensor-type"
+          [(ngModel)]="newSensor.type"
+          name="type"
+          aria-labelledby="sensor-type-label"
+        >
+          <mat-option value="Temperature">Temperature</mat-option>
+          <mat-option value="Pressure">Pressure</mat-option>
+          <mat-option value="Humidity">Humidity</mat-option>
+          <mat-option value="Air Quality">Air Quality</mat-option>
+          <mat-option value="Flow">Flow</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="sensor-status-label">Status</mat-label>
+        <mat-select
+          id="sensor-status"
+          [(ngModel)]="newSensor.status"
+          name="status"
+          aria-labelledby="sensor-status-label"
+        >
+          <mat-option value="online">Online</mat-option>
+          <mat-option value="warning">Warning</mat-option>
+          <mat-option value="offline">Offline</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="sensor-location-label">Location</mat-label>
+        <input
+          id="sensor-location"
+          matInput
+          [(ngModel)]="newSensor.location"
+          name="location"
+          aria-labelledby="sensor-location-label"
+          required
+        />
+      </mat-form-field>
+
+      <div class="two-column">
+        <mat-form-field appearance="outline">
+          <mat-label id="sensor-unit-label">Unit</mat-label>
+          <input
+            id="sensor-unit"
+            matInput
+            [(ngModel)]="newSensor.unit"
+            name="unit"
+            aria-labelledby="sensor-unit-label"
+            placeholder="°C"
+            required
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label id="sensor-value-label">Value</mat-label>
+          <input
+            id="sensor-value"
+            matInput
+            [(ngModel)]="newSensor.value"
+            name="value"
+            aria-labelledby="sensor-value-label"
+            placeholder="23.8"
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="two-column">
+        <mat-form-field appearance="outline">
+          <mat-label id="sensor-threshold-label">Threshold</mat-label>
+          <input
+            id="sensor-threshold"
+            matInput
+            [(ngModel)]="newSensor.threshold"
+            name="threshold"
+            aria-labelledby="sensor-threshold-label"
+            placeholder="28.0"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label id="sensor-last-update-label">Last update</mat-label>
+          <input
+            id="sensor-last-update"
+            matInput
+            [(ngModel)]="newSensor.lastUpdate"
+            name="lastUpdate"
+            aria-labelledby="sensor-last-update-label"
+            placeholder="just now"
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="drawer-actions">
+        <button mat-stroked-button type="button" (click)="drawer.close()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit">Save sensor</button>
+      </div>
+    </form>
+  </mat-drawer>
+
+  <mat-drawer-content class="page-content">
+    <button mat-flat-button color="primary" class="add-button" (click)="drawer.open()">
+      <mat-icon>add</mat-icon>
+      New sensor
+    </button>
+
+    <section class="summary-grid" aria-label="Sensor overview">
+      <article class="summary-card">
+        <span class="summary-label">Total</span>
+        <strong>{{ sensors.length }}</strong>
+      </article>
+      <article class="summary-card summary-card-online">
+        <span class="summary-label">Online</span>
+        <strong>{{ sensors.filter((sensor) => sensor.status === 'online').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-offline">
+        <span class="summary-label">Offline</span>
+        <strong>{{ sensors.filter((sensor) => sensor.status === 'offline').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-alerts">
+        <span class="summary-label">Alerts</span>
+        <strong>{{ sensors.filter((sensor) => sensor.status === 'warning').length }}</strong>
+      </article>
+    </section>
+
+    <section class="sensors-grid">
+      @for (sensor of sensors; track sensor.id) {
+        <mat-card class="sensor-card" appearance="raised">
+          <div class="card-head">
+            <div>
+              <p class="card-type">{{ sensor.type }}</p>
+              <h3>{{ sensor.name }}</h3>
+            </div>
+            <span [class]="getStatusClass(sensor.status)">{{ sensor.status }}</span>
+          </div>
+
+          <mat-card-content>
+            <dl class="sensor-meta">
+              <div>
+                <dt>Location</dt>
+                <dd>{{ sensor.location }}</dd>
+              </div>
+              <div>
+                <dt>Value</dt>
+                <dd>{{ sensor.value }} {{ sensor.unit }}</dd>
+              </div>
+              <div>
+                <dt>Threshold</dt>
+                <dd>{{ sensor.threshold }} {{ sensor.unit }}</dd>
+              </div>
+              <div>
+                <dt>Updated</dt>
+                <dd>{{ sensor.lastUpdate }}</dd>
+              </div>
+            </dl>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary" type="button">Details</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </section>
+  </mat-drawer-content>
+</mat-drawer-container>

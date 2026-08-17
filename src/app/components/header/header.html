@@ -1,4 +1,9 @@
 <mat-toolbar color="primary" class="topbar">
+  <div class="mobile-page-indicator" aria-live="polite">
+    <mat-icon aria-hidden="true">{{ currentNavItem.icon }}</mat-icon>
+    <span>{{ currentNavItem.label }}</span>
+  </div>
+
   <nav class="nav-links desktop-nav" aria-label="Main navigation">
     @for (item of navItems; track item.route) {
       <a
