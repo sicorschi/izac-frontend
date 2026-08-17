@@ -1,1 +1,200 @@
-<p>builders works!</p>
+<mat-drawer-container class="builders-layout" autosize>
+  <mat-drawer #drawer class="printer-drawer" mode="over" position="end">
+    <div class="drawer-header">
+      <div>
+        <p class="eyebrow">Add equipment</p>
+        <h2>New 3D printer</h2>
+      </div>
+      <button mat-icon-button type="button" aria-label="Close form" (click)="drawer.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <form class="printer-form" (ngSubmit)="addPrinter(); drawer.close()">
+      <mat-form-field appearance="outline">
+        <mat-label id="printer-name-label">Printer name</mat-label>
+        <input
+          id="printer-name"
+          matInput
+          [(ngModel)]="newPrinter.name"
+          name="name"
+          aria-labelledby="printer-name-label"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="printer-model-label">Model</mat-label>
+        <input
+          id="printer-model"
+          matInput
+          [(ngModel)]="newPrinter.model"
+          name="model"
+          aria-labelledby="printer-model-label"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="printer-status-label">Status</mat-label>
+        <mat-select
+          id="printer-status"
+          [(ngModel)]="newPrinter.status"
+          name="status"
+          aria-labelledby="printer-status-label"
+        >
+          <mat-option value="printing">Printing</mat-option>
+          <mat-option value="idle">Idle</mat-option>
+          <mat-option value="maintenance">Maintenance</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="two-column">
+        <mat-form-field appearance="outline">
+          <mat-label id="printer-material-label">Material</mat-label>
+          <input
+            id="printer-material"
+            matInput
+            [(ngModel)]="newPrinter.material"
+            name="material"
+            aria-labelledby="printer-material-label"
+            placeholder="PLA"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label id="printer-temp-label">Temperature</mat-label>
+          <input
+            id="printer-temp"
+            matInput
+            [(ngModel)]="newPrinter.temp"
+            name="temp"
+            aria-labelledby="printer-temp-label"
+            placeholder="180°C"
+          />
+        </mat-form-field>
+      </div>
+
+      <div class="two-column">
+        <mat-form-field appearance="outline">
+          <mat-label id="printer-progress-label">Progress</mat-label>
+          <input
+            id="printer-progress"
+            matInput
+            type="number"
+            [(ngModel)]="newPrinter.progress"
+            name="progress"
+            aria-labelledby="printer-progress-label"
+            min="0"
+            max="100"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label id="printer-queue-label">Queue</mat-label>
+          <input
+            id="printer-queue"
+            matInput
+            type="number"
+            [(ngModel)]="newPrinter.queue"
+            name="queue"
+            aria-labelledby="printer-queue-label"
+            min="0"
+          />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label id="printer-job-label">Current job</mat-label>
+        <input
+          id="printer-job"
+          matInput
+          [(ngModel)]="newPrinter.job"
+          name="job"
+          aria-labelledby="printer-job-label"
+          placeholder="Queued"
+        />
+      </mat-form-field>
+
+      <div class="drawer-actions">
+        <button mat-stroked-button type="button" (click)="drawer.close()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit">Save printer</button>
+      </div>
+    </form>
+  </mat-drawer>
+
+  <mat-drawer-content class="page-content">
+    <button mat-flat-button color="primary" class="add-button" (click)="drawer.open()">
+      <mat-icon>add</mat-icon>
+      New printer
+    </button>
+
+    <section class="summary-grid" aria-label="Printer overview">
+      <article class="summary-card">
+        <span class="summary-label">Total</span>
+        <strong>{{ printers.length }}</strong>
+      </article>
+      <article class="summary-card summary-card-online">
+        <span class="summary-label">Printing</span>
+        <strong>{{ printers.filter((printer) => printer.status === 'printing').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-offline">
+        <span class="summary-label">Maintenance</span>
+        <strong>{{ printers.filter((printer) => printer.status === 'maintenance').length }}</strong>
+      </article>
+      <article class="summary-card summary-card-alerts">
+        <span class="summary-label">Idle</span>
+        <strong>{{ printers.filter((printer) => printer.status === 'idle').length }}</strong>
+      </article>
+    </section>
+
+    <section class="printers-grid">
+      @for (printer of printers; track printer.id) {
+        <mat-card class="printer-card" appearance="raised">
+          <div class="card-head">
+            <div>
+              <p class="card-type">{{ printer.model }}</p>
+              <h3>{{ printer.name }}</h3>
+            </div>
+            <span [class]="getStatusClass(printer.status)">{{ printer.status }}</span>
+          </div>
+
+          <mat-card-content>
+            <div class="printer-main">
+              <div class="job-row">
+                <span>Current job</span>
+                <strong>{{ printer.job }}</strong>
+              </div>
+
+              <div class="progress-wrap">
+                <div class="progress-bar">
+                  <span [style.width.%]="printer.progress"></span>
+                </div>
+                <small>{{ printer.progress }}%</small>
+              </div>
+
+              <dl class="printer-meta">
+                <div>
+                  <dt>Material</dt>
+                  <dd>{{ printer.material }}</dd>
+                </div>
+                <div>
+                  <dt>Temp</dt>
+                  <dd>{{ printer.temp }}</dd>
+                </div>
+                <div>
+                  <dt>Queue</dt>
+                  <dd>{{ printer.queue }} jobs</dd>
+                </div>
+              </dl>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary" type="button">Details</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </section>
+  </mat-drawer-content>
+</mat-drawer-container>

@@ -21,8 +21,6 @@ interface Device {
 }
 
 @Component({
-  selector: 'app-devices',
-  standalone: true,
   imports: [
     FormsModule,
     MatButtonModule,

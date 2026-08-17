@@ -8,8 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
   imports: [
     FormsModule,
     MatCardModule,
