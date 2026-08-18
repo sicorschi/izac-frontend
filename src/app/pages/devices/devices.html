@@ -130,24 +130,24 @@
     <section class="summary-grid" aria-label="Device overview">
       <article class="summary-card">
         <span class="summary-label">Total</span>
-        <strong>{{ devices.length }}</strong>
+        <strong>{{ devices().length }}</strong>
       </article>
       <article class="summary-card summary-card-online">
         <span class="summary-label">Online</span>
-        <strong>{{ devices.filter((device) => device.status === 'online').length }}</strong>
+        <strong>{{ devices().filter((device) => device.status === 'online').length }}</strong>
       </article>
       <article class="summary-card summary-card-offline">
         <span class="summary-label">Offline</span>
-        <strong>{{ devices.filter((device) => device.status === 'offline').length }}</strong>
+        <strong>{{ devices().filter((device) => device.status === 'offline').length }}</strong>
       </article>
       <article class="summary-card summary-card-alerts">
         <span class="summary-label">Alerts</span>
-        <strong>{{ devices.filter((device) => device.status === 'warning').length }}</strong>
+        <strong>{{ devices().filter((device) => device.status === 'warning').length }}</strong>
       </article>
     </section>
 
     <section class="devices-grid">
-      @for (device of devices; track device.id) {
+      @for (device of devices(); track device.id) {
         <mat-card class="device-card" appearance="raised">
           <div class="card-head">
             <div>
