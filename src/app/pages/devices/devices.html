@@ -3,14 +3,14 @@
     <div class="drawer-header">
       <div>
         <p class="eyebrow">Add specifications</p>
-        <h2>New IoT device</h2>
+        <h2>{{ isEditing ? 'Edit device' : 'New IoT device' }}</h2>
       </div>
       <button mat-icon-button type="button" aria-label="Close form" (click)="drawer.close()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
 
-    <form class="device-form" (ngSubmit)="addDevice(); drawer.close()">
+    <form class="device-form" (ngSubmit)="saveDevice()">
       <mat-form-field appearance="outline">
         <mat-label id="device-name-label">Device name</mat-label>
         <input
@@ -39,32 +39,6 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label id="device-status-label">Status</mat-label>
-        <mat-select
-          id="device-status"
-          [(ngModel)]="newDevice.status"
-          name="status"
-          aria-labelledby="device-status-label"
-        >
-          <mat-option value="online">Online</mat-option>
-          <mat-option value="warning">Warning</mat-option>
-          <mat-option value="offline">Offline</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label id="device-location-label">Location</mat-label>
-        <input
-          id="device-location"
-          matInput
-          [(ngModel)]="newDevice.location"
-          name="location"
-          aria-labelledby="device-location-label"
-          required
-        />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
         <mat-label id="device-ip-label">IP address</mat-label>
         <input
           id="device-ip"
@@ -76,53 +50,17 @@
         />
       </mat-form-field>
 
-      <div class="two-column">
-        <mat-form-field appearance="outline">
-          <mat-label id="device-uptime-label">Uptime</mat-label>
-          <input
-            id="device-uptime"
-            matInput
-            [(ngModel)]="newDevice.uptime"
-            name="uptime"
-            aria-labelledby="device-uptime-label"
-            placeholder="98.0%"
-          />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label id="device-temperature-label">Temperature</mat-label>
-          <input
-            id="device-temperature"
-            matInput
-            [(ngModel)]="newDevice.temperature"
-            name="temperature"
-            aria-labelledby="device-temperature-label"
-            placeholder="32°C"
-          />
-        </mat-form-field>
-      </div>
-
-      <mat-form-field appearance="outline">
-        <mat-label id="device-version-label">Version</mat-label>
-        <input
-          id="device-version"
-          matInput
-          [(ngModel)]="newDevice.version"
-          name="version"
-          aria-labelledby="device-version-label"
-          placeholder="v1.0.0"
-        />
-      </mat-form-field>
-
       <div class="drawer-actions">
         <button mat-stroked-button type="button" (click)="drawer.close()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit">Save device</button>
+        <button mat-flat-button color="primary" type="submit">
+          {{ isEditing ? 'Save changes' : 'Save device' }}
+        </button>
       </div>
     </form>
   </mat-drawer>
 
   <mat-drawer-content class="page-content">
-    <button mat-flat-button color="primary" class="add-button" (click)="drawer.open()">
+    <button mat-flat-button color="primary" class="add-button" (click)="openAddDrawer()">
       <mat-icon>add</mat-icon>
       New device
     </button>
@@ -183,10 +121,40 @@
           </mat-card-content>
 
           <mat-card-actions align="end">
-            <button mat-stroked-button color="primary" type="button">Details</button>
+            <button
+              mat-flat-button
+              color="primary"
+              class="add-button"
+              type="button"
+              (click)="openEditDrawer(device)"
+            >
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button
+              mat-flat-button
+              color="warn"
+              class="add-button"
+              type="button"
+              (click)="openDeleteDialog(device, deleteDialog)"
+            >
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
           </mat-card-actions>
         </mat-card>
       }
     </section>
   </mat-drawer-content>
 </mat-drawer-container>
+
+<ng-template #deleteDialog>
+  <h2 mat-dialog-title>Delete device?</h2>
+  <mat-dialog-content>
+    <p>Are you sure you want to delete this device? This action cannot be undone.</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false" type="button">Cancel</button>
+    <button mat-flat-button color="warn" [mat-dialog-close]="true" type="button">Delete</button>
+  </mat-dialog-actions>
+</ng-template>
