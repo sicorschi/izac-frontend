@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -6,9 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { Sensor } from '../../models/sensor.types';
+import { MatSidenavModule, MatDrawer } from '@angular/material/sidenav';
+import { Sensor } from '../../models/sensors/sensor.types';
 import { SensorService } from '../../services/sensor.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   imports: [
@@ -20,6 +21,7 @@ import { SensorService } from '../../services/sensor.service';
     MatInputModule,
     MatSelectModule,
     MatSidenavModule,
+    MatDialogModule,
   ],
   templateUrl: './sensors.html',
   styleUrls: ['./sensors.css'],
@@ -27,53 +29,83 @@ import { SensorService } from '../../services/sensor.service';
 export class SensorsComponent implements OnInit {
   private readonly sensorService = inject(SensorService);
   readonly sensors = this.sensorService.sensors;
-
-  newSensor = {
+  private readonly dialog = inject(MatDialog);
+  @ViewChild('drawer') private readonly drawer!: MatDrawer;
+  isEditing = false;
+  selectedSensorId: number | null = null;
+  newSensor: {
+    name: string;
+    type: string;
+    unit: string;
+    threshold: number;
+  } = {
     name: '',
     type: 'Temperature',
-    status: 'online' as Sensor['status'],
-    location: '',
     unit: '',
-    value: '',
-    threshold: '',
-    lastUpdate: '',
+    threshold: 0,
   };
 
-  addSensor(): void {
-    if (
-      !this.newSensor.name.trim() ||
-      !this.newSensor.location.trim() ||
-      !this.newSensor.unit.trim()
-    ) {
+  openAddDrawer(): void {
+    this.isEditing = false;
+    this.selectedSensorId = null;
+    this.resetNewSensorForm();
+    this.drawer.open();
+  }
+
+  openEditDrawer(sensor: Sensor): void {
+    this.isEditing = true;
+    this.selectedSensorId = sensor.id;
+    this.newSensor = {
+      name: sensor.name,
+      type: sensor.type,
+      unit: sensor.unit,
+      threshold: sensor.threshold,
+    };
+    this.drawer.open();
+  }
+
+  saveSensor(): void {
+    if (!this.newSensor.name.trim() || !this.newSensor.type.trim() || !this.newSensor.unit.trim()) {
       return;
     }
 
-    this.sensorService
-      .addSensor({
-        name: this.newSensor.name,
-        type: this.newSensor.type,
-        status: this.newSensor.status,
-        location: this.newSensor.location,
-        unit: this.newSensor.unit,
-        value: this.newSensor.value,
-        threshold: this.newSensor.threshold,
-        lastUpdate: this.newSensor.lastUpdate,
-      })
-      .subscribe(() => {
-        this.resetNewSensorForm();
-      });
+    const payload = {
+      name: this.newSensor.name.trim(),
+      type: this.newSensor.type,
+      unit: this.newSensor.unit.trim(),
+      threshold: this.newSensor.threshold,
+    };
+
+    const request =
+      this.isEditing && this.selectedSensorId !== null
+        ? this.sensorService.updateSensor(this.selectedSensorId, payload)
+        : this.sensorService.addSensor(payload);
+
+    request.subscribe(() => {
+      this.resetNewSensorForm();
+      this.drawer.close();
+    });
+  }
+
+  openDeleteDialog(sensor: Sensor, templateRef: TemplateRef<unknown>): void {
+    const dialogRef = this.dialog.open(templateRef, {
+      width: '420px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean | undefined) => {
+      if (confirmed === true) {
+        this.sensorService.deleteSensor(sensor.id).subscribe();
+      }
+    });
   }
 
   private resetNewSensorForm(): void {
     this.newSensor = {
       name: '',
       type: 'Temperature',
-      status: 'online',
-      location: '',
       unit: '',
-      value: '',
-      threshold: '',
-      lastUpdate: '',
+      threshold: 0,
     };
   }
 

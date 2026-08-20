@@ -1,8 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { Sensor } from '../models/sensor.types';
+import { Sensor } from '../models/sensors/sensor.types';
 import { environment } from '../../environments/environment';
+import { CreateSensorRequest } from '../models/sensors/create-request.types';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class SensorService {
     return this.http.get<Sensor[]>(this.host).pipe(tap((data) => this.sensors.set(data)));
   }
 
-  addSensor(sensor: Omit<Sensor, 'id'>): Observable<Sensor> {
+  addSensor(sensor: Omit<CreateSensorRequest, 'id'>): Observable<Sensor> {
     return this.http.post<Sensor>(this.host, sensor).pipe(
       tap((newSensor) => {
         this.sensors.update((currentSensors) => [newSensor, ...currentSensors]);
@@ -25,7 +26,7 @@ export class SensorService {
     );
   }
 
-  updateSensor(id: number, sensor: Partial<Omit<Sensor, 'id'>>): Observable<Sensor> {
+  updateSensor(id: number, sensor: Partial<Omit<CreateSensorRequest, 'id'>>): Observable<Sensor> {
     return this.http.put<Sensor>(`${this.host}/${id}`, sensor).pipe(
       tap((updatedSensor) => {
         this.sensors.update((currentSensors) =>

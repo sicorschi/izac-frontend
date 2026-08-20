@@ -5,7 +5,7 @@ export interface Sensor {
   status: 'online' | 'offline' | 'warning';
   location: string;
   unit: string;
-  value: string;
-  threshold: string;
+  value: number;
+  threshold: number;
   lastUpdate: string;
 }
