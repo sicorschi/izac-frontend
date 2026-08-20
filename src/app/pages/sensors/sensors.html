@@ -134,24 +134,24 @@
     <section class="summary-grid" aria-label="Sensor overview">
       <article class="summary-card">
         <span class="summary-label">Total</span>
-        <strong>{{ sensors.length }}</strong>
+        <strong>{{ sensors().length }}</strong>
       </article>
       <article class="summary-card summary-card-online">
         <span class="summary-label">Online</span>
-        <strong>{{ sensors.filter((sensor) => sensor.status === 'online').length }}</strong>
+        <strong>{{ sensors().filter((sensor) => sensor.status === 'online').length }}</strong>
       </article>
       <article class="summary-card summary-card-offline">
         <span class="summary-label">Offline</span>
-        <strong>{{ sensors.filter((sensor) => sensor.status === 'offline').length }}</strong>
+        <strong>{{ sensors().filter((sensor) => sensor.status === 'offline').length }}</strong>
       </article>
       <article class="summary-card summary-card-alerts">
         <span class="summary-label">Alerts</span>
-        <strong>{{ sensors.filter((sensor) => sensor.status === 'warning').length }}</strong>
+        <strong>{{ sensors().filter((sensor) => sensor.status === 'warning').length }}</strong>
       </article>
     </section>
 
     <section class="sensors-grid">
-      @for (sensor of sensors; track sensor.id) {
+      @for (sensor of sensors(); track sensor.id) {
         <mat-card class="sensor-card" appearance="raised">
           <div class="card-head">
             <div>

@@ -25,6 +25,24 @@ export class DeviceService {
     );
   }
 
+  updateDevice(id: number, device: Partial<Omit<Device, 'id'>>): Observable<Device> {
+    return this.http.put<Device>(`${this.host}/${id}`, device).pipe(
+      tap((updatedDevice) => {
+        this.devices.update((currentDevices) =>
+          currentDevices.map((d) => (d.id === id ? updatedDevice : d)),
+        );
+      }),
+    );
+  }
+
+  deleteDevice(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.host}/${id}`).pipe(
+      tap(() => {
+        this.devices.update((currentDevices) => currentDevices.filter((d) => d.id !== id));
+      }),
+    );
+  }
+
   fetchDeviceById(id: number): Observable<Device> {
     return this.http.get<Device>(`${this.host}/${id}`);
   }
