@@ -27,7 +27,7 @@ export class SensorService {
   }
 
   updateSensor(id: number, sensor: Partial<Omit<CreateSensorRequest, 'id'>>): Observable<Sensor> {
-    return this.http.put<Sensor>(`${this.host}/${id}`, sensor).pipe(
+    return this.http.patch<Sensor>(`${this.host}/${id}`, sensor).pipe(
       tap((updatedSensor) => {
         this.sensors.update((currentSensors) =>
           currentSensors.map((s) => (s.id === id ? updatedSensor : s)),
