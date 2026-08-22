@@ -79,6 +79,14 @@
   margin: 0 12px 12px 0;
 }
 
+.edit-button {
+  border: 1px solid #4f46e5;
+}
+
+.delete-button {
+  border: 1px solid #991b1b;
+}
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
