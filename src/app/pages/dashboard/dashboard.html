@@ -44,7 +44,7 @@
 
     <div class="chart-card">
       <div class="chart-header">
-        <h3>Sensor health</h3>
+        <h3>Sensors activity</h3>
         <span>Current status</span>
       </div>
       <div class="summary-grid">
@@ -88,7 +88,7 @@
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-header">
-        <h3>Online devices by type</h3>
+        <h3>Active Devices by type</h3>
         <span>Connected</span>
       </div>
       <apx-chart
@@ -115,7 +115,7 @@
 
     <div class="chart-card">
       <div class="chart-header">
-        <h3>Offline devices by type</h3>
+        <h3>Offline Devices by type</h3>
         <span>Needs attention</span>
       </div>
       <apx-chart
@@ -149,26 +149,37 @@
             <div class="bot-avatar">i</div>
             <div>
               <h2>iZac</h2>
+              <small>Operations assistant</small>
             </div>
           </div>
+          <span class="assistant-status">Live</span>
         </div>
-        <div class="chat-window">
-          @for (message of botMessages; track message.text) {
-            <div class="chat-bubble {{ message.from }}">
-              <strong>{{ message.from }}</strong>
-              <p>{{ message.text }}</p>
-            </div>
-          }
+
+        <div class="assistant-overview">
+          <div class="overview-item">
+            <span>Devices</span>
+            <strong>{{ devicesStats()?.totalDevices ?? 0 }}</strong>
+          </div>
+          <div class="overview-item">
+            <span>Sensors</span>
+            <strong>{{ sensorsStats()?.totalSensors ?? 0 }}</strong>
+          </div>
         </div>
+
         <div class="quick-actions">
-          @for (action of quickActions; track action) {
-            <button mat-stroked-button type="button">{{ action }}</button>
-          }
+          <button mat-stroked-button type="button">Check health</button>
+          <button mat-stroked-button type="button">Network status</button>
+          <button mat-stroked-button type="button">Storage usage</button>
+          <button mat-stroked-button type="button">Show alerts</button>
+          <button mat-stroked-button type="button">Device status</button>
+          <button mat-stroked-button type="button">Sensor overview</button>
+          <button mat-stroked-button type="button">Cluster overview</button>
         </div>
+
         <div class="composer">
           <input
             type="text"
-            value="Check sensor pressure in Barcelona Edge"
+            placeholder="Ask iZac to inspect the system..."
             aria-label="Ask iZac"
           />
           <button mat-flat-button color="primary" type="button">
