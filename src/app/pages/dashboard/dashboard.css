@@ -288,8 +288,8 @@
   }
 
   .summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .charts-grid {
@@ -310,28 +310,37 @@
   }
 
   .metric-card {
-    min-height: 76px;
-    padding: 8px;
+    min-height: 78px;
+    padding: 8px 6px;
     border-radius: 12px;
+    gap: 6px;
   }
 
   .metric-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+  }
+
+  .metric-copy {
+    min-width: 0;
+    gap: 2px;
   }
 
   .metric-copy span {
-    font-size: 0.46rem;
-    letter-spacing: 0.04em;
+    font-size: 0.4rem;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
   }
 
   .metric-copy strong {
-    font-size: clamp(0.72rem, 2.5vw, 1rem);
+    font-size: clamp(0.72rem, 2.4vw, 0.9rem);
   }
 
   .metric-copy small {
-    font-size: 0.55rem;
+    font-size: 0.5rem;
+    white-space: nowrap;
   }
 
   .chart-detail-row {
