@@ -1,137 +1,207 @@
 <section class="infra-shell">
-  <div class="summary-grid">
-    @for (metric of metrics; track metric.label) {
-      <article class="metric-card accent-{{ metric.accent }}">
-        <div class="metric-icon">
-          <mat-icon>{{ metric.icon }}</mat-icon>
-        </div>
-
-        <div class="metric-copy">
-          <span>{{ metric.label }}</span>
-          <strong>{{ metric.value }}</strong>
-          <small>{{ metric.delta }}</small>
-        </div>
-      </article>
-    }
-  </div>
-
-  <div class="content-grid">
-    <div class="left-column">
-      @for (infra of infrastructures; track infra.id) {
-        <mat-card class="infra-card">
-          <div class="card-header">
+  <div class="rooms-grid">
+    @for (room of rooms; track room.id) {
+      <mat-card class="room-card" appearance="raised">
+        <div class="room-card-header">
+          <div class="room-title-wrap">
+            <div
+              class="room-icon"
+              [class.online]="room.status === 'online'"
+              [class.warning]="room.status === 'warning'"
+              [class.offline]="room.status === 'offline'"
+            >
+              <mat-icon>meeting_room</mat-icon>
+            </div>
             <div>
-              <p class="eyebrow">Complex</p>
-              <h2>{{ infra.name }}</h2>
-            </div>
-            <span class="status-badge status-{{ infra.status }}">{{ infra.status }}</span>
-          </div>
-
-          <div class="zone-row">
-            <span>{{ infra.zone }}</span>
-            <span>4 connected nodes</span>
-          </div>
-
-          <div class="section-block">
-            <div class="section-title">
-              <h3>Devices</h3>
-              <span>{{ infra.devices.length }} units</span>
-            </div>
-
-            <div class="entity-list">
-              @for (device of infra.devices; track device.name) {
-                <div class="entity-row">
-                  <div class="entity-main">
-                    <span class="dot dot-{{ device.status }}"></span>
-                    <div>
-                      <strong>{{ device.name }}</strong>
-                      <small>{{ device.type }}</small>
-                    </div>
-                  </div>
-                  <div class="entity-meta">
-                    <span>{{ device.role }}</span>
-                    <span class="status-pill status-{{ device.status }}">{{ device.status }}</span>
-                  </div>
-                </div>
-              }
+              <p class="room-label">Infrastructure</p>
+              <h2>{{ room.name }}</h2>
             </div>
           </div>
-
-          <div class="section-block">
-            <div class="section-title">
-              <h3>Sensors</h3>
-              <span>{{ infra.sensors.length }} active</span>
-            </div>
-
-            <div class="sensor-list">
-              @for (sensor of infra.sensors; track sensor.name) {
-                <div class="sensor-row">
-                  <div>
-                    <strong>{{ sensor.name }}</strong>
-                    <small>{{ sensor.type }}</small>
-                  </div>
-                  <div class="sensor-meta">
-                    <span>{{ sensor.value }}</span>
-                    <span class="status-pill status-{{ sensor.status }}">{{ sensor.status }}</span>
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-        </mat-card>
-      }
-    </div>
-
-    <aside class="right-column">
-      <mat-card class="protocol-card">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Communication</p>
-            <h2>Protocols</h2>
-          </div>
-          <button mat-icon-button type="button" aria-label="Protocols overview">
-            <mat-icon>sync_alt</mat-icon>
-          </button>
         </div>
 
-        <div class="protocol-list">
-          @for (protocol of protocols; track protocol.name) {
-            <div class="protocol-item">
-              <div class="protocol-head">
-                <strong>{{ protocol.name }}</strong>
-                <span class="protocol-pill protocol-{{ protocol.status }}">{{
-                  protocol.status
-                }}</span>
+        <div class="room-meta-row">
+          <span>{{ room.description }}</span>
+          <strong>{{ room.occupancy }}</strong>
+        </div>
+
+        <div class="plan-panel">
+          <div class="plan-header">
+            <span>Floor plan</span>
+            <strong>{{ room.devices.length }} devices</strong>
+          </div>
+
+          <svg
+            class="room-plan"
+            viewBox="0 0 320 220"
+            role="img"
+            aria-label="{{ room.name }} room map"
+          >
+            <rect x="18" y="18" width="284" height="184" rx="20" class="plan-outline" />
+            <path d="M18 98 H302" class="plan-wall" />
+            <path d="M125 18 V98" class="plan-wall" />
+            <path d="M18 172 H302" class="plan-wall" />
+            <rect x="43" y="38" width="72" height="42" rx="10" class="plan-furniture" />
+            <rect x="198" y="38" width="64" height="68" rx="10" class="plan-furniture" />
+            <rect x="192" y="136" width="74" height="40" rx="10" class="plan-furniture" />
+            <path d="M140 18 V38 H175" class="plan-door" />
+
+            @for (device of room.devices; track device.name) {
+              <g
+                class="device-marker"
+                [class.selected]="isSelectedDevice(room, device.name)"
+                [attr.transform]="'translate(' + device.x + ' ' + device.y + ')'"
+                (click)="selectDevice(room.id, device.name)"
+                tabindex="0"
+                role="button"
+                (keydown.enter)="selectDevice(room.id, device.name)"
+                (keydown.space)="selectDevice(room.id, device.name)"
+              >
+                <circle
+                  class="marker-ring"
+                  [class.online]="device.status === 'online'"
+                  [class.warning]="device.status === 'warning'"
+                  [class.offline]="device.status === 'offline'"
+                  r="14"
+                ></circle>
+                <circle
+                  class="marker-core"
+                  [class.online]="device.status === 'online'"
+                  [class.warning]="device.status === 'warning'"
+                  [class.offline]="device.status === 'offline'"
+                  r="7"
+                ></circle>
+              </g>
+            }
+
+            @for (sensor of room.sensors; track sensor.name) {
+              <g
+                class="sensor-marker"
+                [class.selected]="isSelectedSensor(room, sensor.name)"
+                [attr.transform]="'translate(' + sensor.x + ' ' + sensor.y + ')'"
+                (click)="selectSensor(room.id, sensor.name)"
+                tabindex="0"
+                role="button"
+                (keydown.enter)="selectSensor(room.id, sensor.name)"
+                (keydown.space)="selectSensor(room.id, sensor.name)"
+              >
+                <rect
+                  class="sensor-badge"
+                  [class.online]="sensor.status === 'healthy'"
+                  [class.warning]="sensor.status === 'warning'"
+                  [class.offline]="sensor.status === 'offline'"
+                  x="-10"
+                  y="-10"
+                  width="20"
+                  height="20"
+                  rx="6"
+                ></rect>
+              </g>
+            }
+          </svg>
+
+          <div class="map-legend" aria-label="Room map legend">
+            <div class="legend-item">
+              <span class="legend-swatch device-legend" aria-hidden="true"></span>
+              <span>Device</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch sensor-legend" aria-hidden="true"></span>
+              <span>Sensor</span>
+            </div>
+          </div>
+
+          <div class="plan-detail">
+            <span class="detail-label">Selected asset</span>
+            <div class="selected-device">
+              <strong>{{ getSelectedAsset(room)?.name }}</strong>
+              <small>{{ getSelectedAsset(room)?.type }}</small>
+            </div>
+
+            <div class="detail-grid">
+              <div>
+                <span>Status</span>
+                <strong>{{ getSelectedAsset(room)?.status }}</strong>
               </div>
-              <p>{{ protocol.detail }}</p>
+              <div>
+                <span>{{ this.selectedSensorByRoom[room.id] ? 'Reading' : 'Location' }}</span>
+                <strong>{{
+                  this.selectedSensorByRoom[room.id]
+                    ? getSelectedAsset(room)?.value
+                    : getSelectedAsset(room)?.location
+                }}</strong>
+              </div>
             </div>
-          }
-        </div>
-      </mat-card>
-
-      <mat-card class="summary-card-block">
-        <div class="panel-header compact">
-          <div>
-            <p class="eyebrow">MQTT</p>
-            <h2>Broker status</h2>
           </div>
         </div>
 
-        <div class="broker-status">
-          <div>
-            <span>Latency</span>
-            <strong>14 ms</strong>
+        <div class="room-section">
+          <div class="section-header">
+            <span>Devices</span>
+            <strong>{{ room.devices.length }}</strong>
           </div>
-          <div>
-            <span>Messages</span>
-            <strong>1.2k/min</strong>
+
+          <div class="item-list">
+            @for (device of room.devices; track device.name) {
+              <div class="item-row" [class.selected-row]="isSelectedDevice(room, device.name)">
+                <div class="item-copy">
+                  <strong>{{ device.name }}</strong>
+                  <small>{{ device.type }} · {{ device.location }}</small>
+                </div>
+
+                <div class="item-meta">
+                  <span
+                    class="status-badge"
+                    [class.online]="device.status === 'online'"
+                    [class.warning]="device.status === 'warning'"
+                    [class.offline]="device.status === 'offline'"
+                  >
+                    {{ device.status }}
+                  </span>
+                  <small>{{ device.ip }}</small>
+                </div>
+              </div>
+            }
           </div>
-          <div>
-            <span>Queue</span>
-            <strong>Low</strong>
+        </div>
+
+        <div class="room-section">
+          <div class="section-header">
+            <span>Sensors</span>
+            <strong>{{ room.sensors.length }}</strong>
+          </div>
+
+          <div class="item-list">
+            @for (sensor of room.sensors; track sensor.name) {
+              <div
+                class="item-row sensor-row"
+                [class.selected-row]="isSelectedSensor(room, sensor.name)"
+                (click)="selectSensor(room.id, sensor.name)"
+                tabindex="0"
+                role="button"
+                (keydown.enter)="selectSensor(room.id, sensor.name)"
+                (keydown.space)="selectSensor(room.id, sensor.name)"
+              >
+                <div class="item-copy">
+                  <strong>{{ sensor.name }}</strong>
+                  <small>{{ sensor.type }}</small>
+                </div>
+
+                <div class="item-meta">
+                  <span
+                    class="status-badge"
+                    [class.online]="sensor.status === 'healthy'"
+                    [class.warning]="sensor.status === 'warning'"
+                    [class.offline]="sensor.status === 'offline'"
+                  >
+                    {{ sensor.status }}
+                  </span>
+                  <small>{{ sensor.value }}</small>
+                </div>
+              </div>
+            }
           </div>
         </div>
       </mat-card>
-    </aside>
+    }
   </div>
 </section>
