@@ -26,21 +26,21 @@ export class DashboardComponent implements OnInit {
 
     return [
       {
-        label: 'Total devices',
+        label: 'Total',
         value: stats.totalDevices,
         delta: 'All units',
         icon: 'devices',
         accent: 'blue',
       },
       {
-        label: 'Active devices',
+        label: 'Active',
         value: stats.activeDevices,
         delta: 'Online',
         icon: 'check_circle',
         accent: 'green',
       },
       {
-        label: 'Offline devices',
+        label: 'Offline',
         value: stats.offlineDevices,
         delta: 'Needs attention',
         icon: 'signal_cellular_connected_no_internet_4_bar',
@@ -61,21 +61,21 @@ export class DashboardComponent implements OnInit {
 
     return [
       {
-        label: 'Total sensors',
+        label: 'Total',
         value: stats.totalSensors,
         delta: 'All monitored',
         icon: 'sensors',
         accent: 'purple',
       },
       {
-        label: 'Active sensors',
+        label: 'Active',
         value: activeCount,
         delta: 'Reporting',
         icon: 'check_circle',
         accent: 'green',
       },
       {
-        label: 'Offline sensors',
+        label: 'Offline',
         value: offlineCount,
         delta: 'Needs review',
         icon: 'signal_cellular_connected_no_internet_4_bar',
