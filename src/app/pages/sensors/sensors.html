@@ -35,7 +35,10 @@
           <mat-option value="Pressure">Pressure</mat-option>
           <mat-option value="Humidity">Humidity</mat-option>
           <mat-option value="Air Quality">Air Quality</mat-option>
-          <mat-option value="Flow">Flow</mat-option>
+          <mat-option value="Proximity">Proximity</mat-option>
+          <mat-option value="Relay">Relay</mat-option>
+          <mat-option value="Servo">Servo</mat-option>
+          <mat-option value="LED">LED</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -76,7 +79,7 @@
   </mat-drawer>
 
   <mat-drawer-content class="page-content">
-    <button mat-flat-button color="primary" class="add-button" (click)="openAddDrawer()">
+    <button mat-flat-button color="secondary" class="add-button" (click)="openAddDrawer()">
       <mat-icon>add</mat-icon>
       New sensor
     </button>
@@ -103,40 +106,44 @@
     <section class="sensors-grid">
       @for (sensor of sensors(); track sensor.id) {
         <mat-card class="sensor-card" appearance="raised">
-          <div class="card-head">
-            <div>
-              <p class="card-type">{{ sensor.type }}</p>
-              <h3>{{ sensor.name }}</h3>
-            </div>
+          <div class="card-topbar">
+            <span class="sensor-card-badge">{{ sensor.type }}</span>
             <span [class]="getStatusClass(sensor.status)">{{ sensor.status }}</span>
           </div>
 
+          <div class="card-head">
+            <div class="sensor-card-title-group">
+              <h3>{{ sensor.name }}</h3>
+              <small>Sensor #{{ sensor.id }}</small>
+            </div>
+          </div>
+
           <mat-card-content>
-            <dl class="sensor-meta">
-              <div>
-                <dt>Location</dt>
-                <dd>{{ sensor.location }}</dd>
+            <div class="sensor-meta-grid">
+              <div class="metric-item">
+                <span class="metric-label">Location</span>
+                <strong>{{ sensor.location }}</strong>
               </div>
-              <div>
-                <dt>Value</dt>
-                <dd>{{ sensor.value }} {{ sensor.unit }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Value</span>
+                <strong>{{ sensor.value }} {{ sensor.unit }}</strong>
               </div>
-              <div>
-                <dt>Threshold</dt>
-                <dd>{{ sensor.threshold }} {{ sensor.unit }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Threshold</span>
+                <strong>{{ sensor.threshold }} {{ sensor.unit }}</strong>
               </div>
-              <div>
-                <dt>Updated</dt>
-                <dd>{{ sensor.lastUpdate }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Updated</span>
+                <strong>{{ sensor.lastUpdate }}</strong>
               </div>
-            </dl>
+            </div>
           </mat-card-content>
 
           <mat-card-actions align="end">
             <button
               mat-flat-button
-              color="primary"
-              class="add-button"
+              color="secondary"
+              class="add-button edit-button"
               type="button"
               (click)="openEditDrawer(sensor)"
             >
@@ -145,8 +152,8 @@
             </button>
             <button
               mat-flat-button
-              color="warn"
-              class="add-button"
+              color="secondary"
+              class="add-button delete-button"
               type="button"
               (click)="openDeleteDialog(sensor, deleteDialog)"
             >
