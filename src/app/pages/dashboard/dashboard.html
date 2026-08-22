@@ -1,161 +1,157 @@
 <section class="dashboard-shell">
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Devices activity</h3>
+        <span>Current state</span>
+      </div>
+      <div class="summary-grid">
+        @for (deviceMetric of deviceStatsCards(); track deviceMetric.label) {
+          <article class="metric-card accent-{{ deviceMetric.accent }}">
+            <div class="metric-icon">
+              <mat-icon>{{ deviceMetric.icon }}</mat-icon>
+            </div>
 
-  <div class="summary-grid">
-    @for (metric of metrics; track metric.label) {
-      <article class="metric-card accent-{{ metric.accent }}">
-        <div class="metric-icon">
-          <mat-icon>{{ metric.icon }}</mat-icon>
-        </div>
+            <div class="metric-copy">
+              <span>{{ deviceMetric.label }}</span>
+              <strong>{{ deviceMetric.value }}</strong>
+              <small>{{ deviceMetric.delta }}</small>
+            </div>
+          </article>
+        }
+      </div>
+      <apx-chart
+        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+        [series]="deviceStatusChart().series"
+        [chart]="deviceStatusChart().chart"
+        [labels]="deviceStatusChart().labels"
+        [colors]="deviceStatusChart().colors"
+        [legend]="deviceStatusChart().legend"
+        [dataLabels]="deviceStatusChart().dataLabels"
+        [plotOptions]="deviceStatusChart().plotOptions"
+      ></apx-chart>
 
-        <div class="metric-copy">
-          <span>{{ metric.label }}</span>
-          <strong>{{ metric.value }}</strong>
-          <small>{{ metric.delta }}</small>
-        </div>
-      </article>
-    }
+      <div class="chart-legend">
+        @for (item of deviceChartLegend(); track item.label) {
+          <div class="chart-legend-item">
+            <span class="legend-swatch" [style.background]="item.color"></span>
+            <span>{{ item.label }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Sensor health</h3>
+        <span>Current status</span>
+      </div>
+      <div class="summary-grid">
+        @for (sensorMetric of sensorStatsCards(); track sensorMetric.label) {
+          <article class="metric-card accent-{{ sensorMetric.accent }}">
+            <div class="metric-icon">
+              <mat-icon>{{ sensorMetric.icon }}</mat-icon>
+            </div>
+
+            <div class="metric-copy">
+              <span>{{ sensorMetric.label }}</span>
+              <strong>{{ sensorMetric.value }}</strong>
+              <small>{{ sensorMetric.delta }}</small>
+            </div>
+          </article>
+        }
+      </div>
+      <apx-chart
+        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+        [series]="sensorHealthChart().series"
+        [chart]="sensorHealthChart().chart"
+        [labels]="sensorHealthChart().labels"
+        [colors]="sensorHealthChart().colors"
+        [legend]="sensorHealthChart().legend"
+        [dataLabels]="sensorHealthChart().dataLabels"
+        [plotOptions]="sensorHealthChart().plotOptions"
+      ></apx-chart>
+
+      <div class="chart-legend">
+        @for (item of sensorChartLegend(); track item.label) {
+          <div class="chart-legend-item">
+            <span class="legend-swatch" [style.background]="item.color"></span>
+            <span>{{ item.label }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Online devices by type</h3>
+        <span>Connected</span>
+      </div>
+      <apx-chart
+        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+        [series]="onlineDeviceTypesChart().series"
+        [chart]="onlineDeviceTypesChart().chart"
+        [labels]="onlineDeviceTypesChart().labels"
+        [colors]="onlineDeviceTypesChart().colors"
+        [legend]="onlineDeviceTypesChart().legend"
+        [dataLabels]="onlineDeviceTypesChart().dataLabels"
+        [plotOptions]="onlineDeviceTypesChart().plotOptions"
+      ></apx-chart>
+
+      <div class="chart-legend">
+        @for (item of onlineDeviceTypesLegend(); track item.label) {
+          <div class="chart-legend-item">
+            <span class="legend-swatch" [style.background]="item.color"></span>
+            <span>{{ item.label }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Offline devices by type</h3>
+        <span>Needs attention</span>
+      </div>
+      <apx-chart
+        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+        [series]="offlineDeviceTypesChart().series"
+        [chart]="offlineDeviceTypesChart().chart"
+        [labels]="offlineDeviceTypesChart().labels"
+        [colors]="offlineDeviceTypesChart().colors"
+        [legend]="offlineDeviceTypesChart().legend"
+        [dataLabels]="offlineDeviceTypesChart().dataLabels"
+        [plotOptions]="offlineDeviceTypesChart().plotOptions"
+      ></apx-chart>
+
+      <div class="chart-legend">
+        @for (item of offlineDeviceTypesLegend(); track item.label) {
+          <div class="chart-legend-item">
+            <span class="legend-swatch" [style.background]="item.color"></span>
+            <span>{{ item.label }}</span>
+            <strong>{{ item.value }}</strong>
+          </div>
+        }
+      </div>
+    </div>
   </div>
 
   <div class="content-grid">
-    <div class="main-column">
-      <mat-card class="panel-card">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Live</p>
-            <h2>Devices</h2>
-          </div>
-          <button mat-icon-button type="button" aria-label="View all devices">
-            <mat-icon>chevron_right</mat-icon>
-          </button>
-        </div>
-
-        <div class="list-panel">
-          @for (device of devices; track device.name) {
-            <div class="row-item">
-              <div class="row-main">
-                <span class="dot dot-{{ device.status }}"></span>
-                <div>
-                  <strong>{{ device.name }}</strong>
-                  <small>{{ device.zone }}</small>
-                </div>
-              </div>
-
-              <div class="row-meta">
-                <span class="status-badge status-{{ device.status }}">{{ device.status }}</span>
-                <strong>{{ device.value }}</strong>
-              </div>
-            </div>
-          }
-        </div>
-      </mat-card>
-
-      <mat-card class="panel-card">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Monitoring</p>
-            <h2>Sensors</h2>
-          </div>
-          <button mat-icon-button type="button" aria-label="Open sensor analytics">
-            <mat-icon>sensor_occupied</mat-icon>
-          </button>
-        </div>
-
-        <div class="sensor-grid">
-          @for (sensor of sensors; track sensor.name) {
-            <div class="sensor-card">
-              <div class="sensor-topline">
-                <span>{{ sensor.name }}</span>
-                <span class="pill pill-{{ sensor.status }}">{{ sensor.status }}</span>
-              </div>
-              <strong>{{ sensor.reading }}</strong>
-              <small>{{ sensor.trend }}</small>
-            </div>
-          }
-        </div>
-      </mat-card>
-
-      <mat-card class="panel-card">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Infrastructure</p>
-            <h2>Sites</h2>
-          </div>
-          <button mat-icon-button type="button" aria-label="View infrastructure health">
-            <mat-icon>hub</mat-icon>
-          </button>
-        </div>
-
-        <div class="list-panel">
-          @for (site of infrastructures; track site.name) {
-            <div class="row-item">
-              <div class="row-main">
-                <span class="dot dot-{{ site.status }}"></span>
-                <div>
-                  <strong>{{ site.name }}</strong>
-                  <small>Uptime {{ site.uptime }}</small>
-                </div>
-              </div>
-
-              <div class="row-meta compact">
-                <span>{{ site.load }} load</span>
-                <span class="status-badge status-{{ site.status }}">{{ site.status }}</span>
-              </div>
-            </div>
-          }
-        </div>
-      </mat-card>
-
-      <mat-card class="panel-card">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Production</p>
-            <h2>Builders</h2>
-          </div>
-          <button mat-icon-button type="button" aria-label="Open builder jobs">
-            <mat-icon>precision_manufacturing</mat-icon>
-          </button>
-        </div>
-
-        <div class="builder-grid">
-          @for (builder of builders; track builder.name) {
-            <div class="builder-card">
-              <div class="builder-header">
-                <strong>{{ builder.name }}</strong>
-                <span class="status-badge status-{{ builder.status }}">{{ builder.status }}</span>
-              </div>
-
-              <p>{{ builder.job }}</p>
-
-              <div class="progress-wrap">
-                <div class="progress-bar">
-                  <span [style.width.%]="builder.progress"></span>
-                </div>
-                <small>{{ builder.progress }}%</small>
-              </div>
-
-              <div class="builder-footer">
-                <span>Temp {{ builder.temp }}</span>
-                <span>Queue 3</span>
-              </div>
-            </div>
-          }
-        </div>
-      </mat-card>
-    </div>
-
     <aside class="bot-column">
       <mat-card class="bot-card">
         <div class="bot-header">
           <div class="bot-title-row">
             <div class="bot-avatar">i</div>
             <div>
-              <p class="eyebrow">Client bot</p>
               <h2>iZac</h2>
             </div>
           </div>
-          <span class="online-indicator">Online</span>
         </div>
-
         <div class="chat-window">
           @for (message of botMessages; track message.text) {
             <div class="chat-bubble {{ message.from }}">
@@ -164,15 +160,17 @@
             </div>
           }
         </div>
-
         <div class="quick-actions">
           @for (action of quickActions; track action) {
             <button mat-stroked-button type="button">{{ action }}</button>
           }
         </div>
-
         <div class="composer">
-          <input type="text" value="Check sensor pressure in Barcelona Edge" aria-label="Ask iZac" />
+          <input
+            type="text"
+            value="Check sensor pressure in Barcelona Edge"
+            aria-label="Ask iZac"
+          />
           <button mat-flat-button color="primary" type="button">
             <mat-icon>send</mat-icon>
           </button>
