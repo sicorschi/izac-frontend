@@ -61,7 +61,7 @@
   </mat-drawer>
 
   <mat-drawer-content class="page-content">
-    <button mat-flat-button color="primary" class="add-button" (click)="openAddDrawer()">
+    <button mat-flat-button color="secondary" class="add-button" (click)="openAddDrawer()">
       <mat-icon>add</mat-icon>
       New device
     </button>
@@ -88,37 +88,41 @@
     <section class="devices-grid">
       @for (device of devices(); track device.id) {
         <mat-card class="device-card" appearance="raised">
-          <div class="card-head">
-            <div>
-              <p class="card-type">{{ device.type }}</p>
-              <h3>{{ device.name }}</h3>
-            </div>
+          <div class="card-topbar">
+            <span class="device-card-badge">{{ device.type }}</span>
             <span [class]="getStatusClass(device.status)">{{ device.status }}</span>
           </div>
 
+          <div class="card-head">
+            <div class="device-card-title-group">
+              <h3>{{ device.name }}</h3>
+              <small>Asset #{{ device.id }}</small>
+            </div>
+          </div>
+
           <mat-card-content>
-            <dl class="device-meta">
-              <div>
-                <dt>Location</dt>
-                <dd>{{ device.location }}</dd>
+            <div class="device-meta-grid">
+              <div class="metric-item">
+                <span class="metric-label">Location</span>
+                <strong>{{ device.location }}</strong>
               </div>
-              <div>
-                <dt>IP</dt>
-                <dd>{{ device.ip }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">IP</span>
+                <strong>{{ device.ip }}</strong>
               </div>
-              <div>
-                <dt>Uptime</dt>
-                <dd>{{ device.uptime }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Uptime</span>
+                <strong>{{ device.uptime }}</strong>
               </div>
-              <div>
-                <dt>Temp</dt>
-                <dd>{{ device.temperature }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Temp</span>
+                <strong>{{ device.temperature }}</strong>
               </div>
-              <div>
-                <dt>Version</dt>
-                <dd>{{ device.version }}</dd>
+              <div class="metric-item">
+                <span class="metric-label">Version</span>
+                <strong>{{ device.version }}</strong>
               </div>
-            </dl>
+            </div>
           </mat-card-content>
 
           <mat-card-actions align="end">

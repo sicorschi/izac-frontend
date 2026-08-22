@@ -281,37 +281,63 @@
     grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 700px) {
   .dashboard-shell {
     padding: 16px 14px 20px;
   }
+
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  apx-chart {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
   .metric-card {
     min-height: 76px;
     padding: 8px;
     border-radius: 12px;
   }
+
   .metric-icon {
     width: 32px;
     height: 32px;
     border-radius: 10px;
   }
+
   .metric-copy span {
     font-size: 0.46rem;
     letter-spacing: 0.04em;
   }
+
   .metric-copy strong {
     font-size: clamp(0.72rem, 2.5vw, 1rem);
   }
+
   .metric-copy small {
     font-size: 0.55rem;
   }
+
   .chart-detail-row {
     grid-template-columns: 1fr;
   }
+
   .chart-detail-meta {
     text-align: left;
   }
