@@ -3,32 +3,33 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
-interface InfrastructureMetric {
-  label: string;
-  value: string;
-  delta: string;
-  accent: 'blue' | 'green' | 'amber' | 'purple';
-  icon: string;
-}
-
-interface InfraDevice {
+interface RoomDevice {
   name: string;
   type: string;
   status: 'online' | 'warning' | 'offline';
-  role: string;
+  ip: string;
+  location: string;
+  x: number;
+  y: number;
 }
 
-interface InfraSensor {
+interface RoomSensor {
   name: string;
   type: string;
+  status: 'healthy' | 'warning' | 'offline';
   value: string;
-  status: 'online' | 'warning' | 'offline';
+  x: number;
+  y: number;
 }
 
-interface ProtocolItem {
+interface InfrastructureRoom {
+  id: number;
   name: string;
-  detail: string;
-  status: 'enabled' | 'monitoring' | 'warning';
+  description: string;
+  status: 'online' | 'warning' | 'offline';
+  occupancy: string;
+  devices: RoomDevice[];
+  sensors: RoomSensor[];
 }
 
 @Component({
@@ -39,54 +40,267 @@ interface ProtocolItem {
   styleUrls: ['./infrastructures.css'],
 })
 export class InfrastructuresComponent {
-  metrics: InfrastructureMetric[] = [
-    { label: 'Active infra', value: '12', delta: '+2 this month', accent: 'blue', icon: 'hub' },
-    { label: 'Connected devices', value: '248', delta: '+12.4%', accent: 'green', icon: 'devices' },
-    { label: 'Sensors online', value: '86', delta: '+5.2%', accent: 'amber', icon: 'sensors' },
-    { label: 'MQTT nodes', value: '19', delta: '96% healthy', accent: 'purple', icon: 'wifi_tethering' },
-  ];
+  selectedDeviceByRoom: Record<number, string> = {
+    1: 'Main gateway',
+    2: 'Climate node',
+    3: 'Energy panel',
+  };
 
-  infrastructures = [
+  selectedSensorByRoom: Record<number, string> = {};
+
+  readonly rooms: InfrastructureRoom[] = [
     {
       id: 1,
-      name: 'Madrid Smart Line',
-      zone: 'Central hub',
+      name: 'Living room',
+      description: 'Main aggregation zone',
       status: 'online',
+      occupancy: '4 active endpoints',
       devices: [
-        { name: 'Edge Gateway A01', type: 'Gateway', status: 'online', role: 'Broker' },
-        { name: 'Energy Meter M21', type: 'Meter', status: 'online', role: 'Consumption' },
-        { name: 'Access Panel X9', type: 'Controller', status: 'warning', role: 'Control' },
+        {
+          name: 'Main gateway',
+          type: 'Gateway',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Wall panel',
+          x: 72,
+          y: 150,
+        },
+        {
+          name: 'Smart TV hub',
+          type: 'Controller',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Media stand',
+          x: 142,
+          y: 90,
+        },
+        {
+          name: 'Ambient light cluster',
+          type: 'Edge device',
+          status: 'warning',
+          ip: 'Private LAN',
+          location: 'Ceiling ring',
+          x: 226,
+          y: 120,
+        },
       ],
       sensors: [
-        { name: 'Temperature Probe T12', type: 'Temperature', value: '23.8°C', status: 'online' },
-        { name: 'Air Quality A04', type: 'Air quality', value: '82 AQI', status: 'warning' },
-        { name: 'Humidity Node H19', type: 'Humidity', value: '41%', status: 'online' },
+        {
+          name: 'Temperature',
+          type: 'Climate',
+          status: 'healthy',
+          value: '21.8°C',
+          x: 86,
+          y: 82,
+        },
+        {
+          name: 'Air quality',
+          type: 'Air',
+          status: 'healthy',
+          value: 'Good',
+          x: 206,
+          y: 52,
+        },
+        {
+          name: 'Motion',
+          type: 'Presence',
+          status: 'warning',
+          value: 'Low traffic',
+          x: 240,
+          y: 170,
+        },
       ],
     },
     {
       id: 2,
-      name: 'Barcelona Edge Cluster',
-      zone: 'Coastal edge',
+      name: 'Bedroom',
+      description: 'Sleep and comfort zone',
       status: 'warning',
+      occupancy: '3 active endpoints',
       devices: [
-        { name: 'Smart Sensor P08', type: 'Sensor', status: 'warning', role: 'Telemetry' },
-        { name: 'Valve Controller C19', type: 'Controller', status: 'online', role: 'Actuation' },
-        { name: 'Battery Bank B04', type: 'Power', status: 'offline', role: 'Backup' },
+        {
+          name: 'Bedside controller',
+          type: 'Controller',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Nightstand',
+          x: 82,
+          y: 120,
+        },
+        {
+          name: 'Climate node',
+          type: 'Edge device',
+          status: 'warning',
+          ip: 'Private LAN',
+          location: 'Window side',
+          x: 180,
+          y: 82,
+        },
+        {
+          name: 'Security camera',
+          type: 'Camera',
+          status: 'offline',
+          ip: 'Private LAN',
+          location: 'North wall',
+          x: 235,
+          y: 150,
+        },
       ],
       sensors: [
-        { name: 'Pressure Gauge P08', type: 'Pressure', value: '2.4 bar', status: 'warning' },
-        { name: 'Flow Monitor F11', type: 'Flow', value: '1.4 m³/h', status: 'online' },
+        {
+          name: 'Humidity',
+          type: 'Climate',
+          status: 'healthy',
+          value: '45%',
+          x: 86,
+          y: 64,
+        },
+        {
+          name: 'Night light',
+          type: 'Lighting',
+          status: 'warning',
+          value: 'Low battery',
+          x: 205,
+          y: 162,
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: 'Kitchen',
+      description: 'Energy and appliance monitoring',
+      status: 'online',
+      occupancy: '5 active endpoints',
+      devices: [
+        {
+          name: 'Energy panel',
+          type: 'Gateway',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Cabinet wall',
+          x: 76,
+          y: 120,
+        },
+        {
+          name: 'Smart oven',
+          type: 'Appliance',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Countertop',
+          x: 150,
+          y: 100,
+        },
+        {
+          name: 'Water leak monitor',
+          type: 'Sensor hub',
+          status: 'online',
+          ip: 'Private LAN',
+          location: 'Sink unit',
+          x: 230,
+          y: 150,
+        },
+      ],
+      sensors: [
+        {
+          name: 'Temperature',
+          type: 'Thermal',
+          status: 'healthy',
+          value: '23.4°C',
+          x: 86,
+          y: 58,
+        },
+        {
+          name: 'Water flow',
+          type: 'Utility',
+          status: 'healthy',
+          value: 'Stable',
+          x: 212,
+          y: 60,
+        },
+        {
+          name: 'Gas level',
+          type: 'Safety',
+          status: 'warning',
+          value: 'Check valve',
+          x: 242,
+          y: 166,
+        },
       ],
     },
   ];
 
-  protocols: ProtocolItem[] = [
-    { name: 'MQTT', detail: 'Telemetry and command channel for all edge nodes', status: 'enabled' },
-    { name: 'MQTT TLS', detail: 'Encrypted transport between brokers and gateways', status: 'monitoring' },
-    { name: 'QoS 1', detail: 'Reliable messages for sensor status and alerts', status: 'enabled' },
-  ];
+  getTotalDevices(): number {
+    return this.rooms.reduce((total, room) => total + room.devices.length, 0);
+  }
 
-  getStatusClass(status: 'online' | 'warning' | 'offline'): string {
-    return `status status-${status}`;
+  getTotalSensors(): number {
+    return this.rooms.reduce((total, room) => total + room.sensors.length, 0);
+  }
+
+  getAlertsCount(): number {
+    const warningDevices = this.rooms.reduce(
+      (total, room) => total + room.devices.filter((device) => device.status === 'warning').length,
+      0,
+    );
+    const warningSensors = this.rooms.reduce(
+      (total, room) => total + room.sensors.filter((sensor) => sensor.status === 'warning').length,
+      0,
+    );
+    return warningDevices + warningSensors;
+  }
+
+  getSelectedAsset(
+    room: InfrastructureRoom,
+  ): { name: string; type: string; status: string; location?: string; value?: string } | undefined {
+    const selectedSensor = this.selectedSensorByRoom[room.id];
+    if (selectedSensor) {
+      const sensor = room.sensors.find((item) => item.name === selectedSensor);
+      if (sensor) {
+        return {
+          name: sensor.name,
+          type: sensor.type,
+          status: sensor.status,
+          value: sensor.value,
+        };
+      }
+    }
+
+    const selectedDevice = this.selectedDeviceByRoom[room.id];
+    const device = room.devices.find((item) => item.name === selectedDevice) ?? room.devices[0];
+    if (!device) {
+      return undefined;
+    }
+
+    return {
+      name: device.name,
+      type: device.type,
+      status: device.status,
+      location: device.location,
+    };
+  }
+
+  getSelectedDevice(room: InfrastructureRoom): RoomDevice | undefined {
+    return (
+      room.devices.find((device) => device.name === this.selectedDeviceByRoom[room.id]) ??
+      room.devices[0]
+    );
+  }
+
+  selectDevice(roomId: number, deviceName: string): void {
+    delete this.selectedSensorByRoom[roomId];
+    this.selectedDeviceByRoom[roomId] = deviceName;
+  }
+
+  selectSensor(roomId: number, sensorName: string): void {
+    delete this.selectedDeviceByRoom[roomId];
+    this.selectedSensorByRoom[roomId] = sensorName;
+  }
+
+  isSelectedDevice(room: InfrastructureRoom, deviceName: string): boolean {
+    return this.selectedDeviceByRoom[room.id] === deviceName && !this.selectedSensorByRoom[room.id];
+  }
+
+  isSelectedSensor(room: InfrastructureRoom, sensorName: string): boolean {
+    return this.selectedSensorByRoom[room.id] === sensorName;
   }
 }
