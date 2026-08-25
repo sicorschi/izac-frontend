@@ -1,20 +1,4 @@
 <section class="dashboard-shell">
-  <div class="summary-grid">
-    @for (deviceMetric of deviceStatsCards(); track deviceMetric.label) {
-      <article class="metric-card accent-{{ deviceMetric.accent }}">
-        <div class="metric-icon">
-          <mat-icon>{{ deviceMetric.icon }}</mat-icon>
-        </div>
-
-        <div class="metric-copy">
-          <span>{{ deviceMetric.label }}</span>
-          <strong>{{ deviceMetric.value }}</strong>
-          <small>{{ deviceMetric.delta }}</small>
-        </div>
-      </article>
-    }
-  </div>
-
   <div class="charts-column">
     <div class="chart-card chart-card-wide">
       <div class="chart-header">
@@ -35,25 +19,6 @@
             [plotOptions]="deviceStatusChart().plotOptions"
           ></apx-chart>
         </div>
-
-        <aside class="chart-detail-panel">
-          <div class="detail-panel-header">Top endpoints</div>
-          @for (device of activeDeviceHighlights(); track device.id) {
-            <div class="chart-detail-row">
-              <div class="detail-copy">
-                <strong>{{ device.name }}</strong>
-                <small>{{ device.type }}</small>
-                <small>{{ device.location }}</small>
-              </div>
-              <div class="chart-detail-meta">
-                <span>{{ device.ip }}</span>
-                <small>{{ formatUptime(device.uptime) }}</small>
-                <small>{{ device.status }}</small>
-                <small>{{ device.version }}</small>
-              </div>
-            </div>
-          }
-        </aside>
       </div>
 
       <div class="chart-legend">
@@ -69,7 +34,7 @@
 
     <div class="chart-card chart-card-wide">
       <div class="chart-header">
-        <h3>Active Devices by type</h3>
+        <h3>Active devices</h3>
         <span>Connected</span>
       </div>
 
@@ -86,29 +51,22 @@
             [plotOptions]="onlineDeviceTypesChart().plotOptions"
           ></apx-chart>
         </div>
-
-        <aside class="chart-detail-panel">
-          <div class="detail-panel-header">Connected devices</div>
-          @for (device of activeDeviceHighlights(); track device.id) {
-            <div class="chart-detail-row">
-              <div class="detail-copy">
-                <strong>{{ device.name }}</strong>
-                <small>{{ device.location }}</small>
-              </div>
-              <div class="chart-detail-meta">
-                <span>{{ device.version }}</span>
-              </div>
-            </div>
-          }
-        </aside>
       </div>
 
-      <div class="chart-legend">
-        @for (item of onlineDeviceTypesLegend(); track item.label) {
-          <div class="chart-legend-item">
-            <span class="legend-swatch" [style.background]="item.color"></span>
-            <span>{{ item.label }}</span>
-            <strong>{{ item.value }}</strong>
+      <div class="chart-legend active-device-legend">
+        @for (device of activeDeviceHighlights(); track device.id; let i = $index) {
+          <div class="chart-legend-item chart-device-item">
+            <span
+              class="legend-swatch"
+              [style.background]="
+                ['#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#14b8a6', '#06b6d4'][i % 6]
+              "
+            ></span>
+            <div class="device-legend-copy">
+              <strong>{{ device.name }}</strong>
+              <small>{{ device.type }} · {{ device.location }}</small>
+              <small>{{ device.ip }} · {{ device.version }}</small>
+            </div>
           </div>
         }
       </div>
@@ -133,30 +91,22 @@
             [plotOptions]="offlineDeviceTypesChart().plotOptions"
           ></apx-chart>
         </div>
-
-        <aside class="chart-detail-panel">
-          <div class="detail-panel-header">Action queue</div>
-          @for (device of offlineDeviceHighlights(); track device.id) {
-            <div class="chart-detail-row">
-              <div class="detail-copy">
-                <strong>{{ device.name }}</strong>
-                <small>{{ device.location }}</small>
-              </div>
-              <div class="chart-detail-meta">
-                <span>{{ device.ip }}</span>
-                <small>{{ device.uptime }}</small>
-              </div>
-            </div>
-          }
-        </aside>
       </div>
 
-      <div class="chart-legend">
-        @for (item of offlineDeviceTypesLegend(); track item.label) {
-          <div class="chart-legend-item">
-            <span class="legend-swatch" [style.background]="item.color"></span>
-            <span>{{ item.label }}</span>
-            <strong>{{ item.value }}</strong>
+      <div class="chart-legend active-device-legend">
+        @for (device of offlineDeviceHighlights(); track device.id; let i = $index) {
+          <div class="chart-legend-item chart-device-item">
+            <span
+              class="legend-swatch"
+              [style.background]="
+                ['#f97316', '#ef4444', '#f59e0b', '#06b6d4', '#a78bfa', '#f43f5e'][i % 6]
+              "
+            ></span>
+            <div class="device-legend-copy">
+              <strong>{{ device.name }}</strong>
+              <small>{{ device.type }} · {{ device.location }}</small>
+              <small>{{ device.ip }} · {{ device.version }}</small>
+            </div>
           </div>
         }
       </div>
