@@ -18,19 +18,13 @@ export class DashboardService {
 
   loadDevicesStats(): Observable<DevicesStatsResponse> {
     return this.http
-      .get<DevicesStatsResponse>(`${this.host}/devices`)
+      .get<DevicesStatsResponse>(`${this.host}/devices/stats`)
       .pipe(tap((data) => this.devicesStats.set(data)));
   }
 
   loadDevicesDetailStats(): Observable<DevicesDetailStatsResponse> {
     return this.http
-      .get<DevicesDetailStatsResponse>(`${this.host}/devices/details`)
+      .get<DevicesDetailStatsResponse>(`${this.host}/devices`)
       .pipe(tap((data) => this.devicesDetailStats.set(data)));
-  }
-
-  loadSensorsStats(): Observable<SensorsStatsResponse> {
-    return this.http
-      .get<SensorsStatsResponse>(`${this.host}/sensors`)
-      .pipe(tap((data) => this.sensorsStats.set(data)));
   }
 }
