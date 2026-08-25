@@ -1,4 +1,6 @@
-import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import type { ApexOptions } from 'apexcharts';
+import { NgApexchartsModule } from 'ng-apexcharts';
 import type { CreateDeviceRequest } from '../../models/devices/create-request.types';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,6 +25,7 @@ import { DeviceService } from '../../services/device.service';
     MatInputModule,
     MatSelectModule,
     MatSidenavModule,
+    NgApexchartsModule,
   ],
   templateUrl: './devices.html',
   styleUrls: ['./devices.css'],
@@ -110,6 +113,45 @@ export class DevicesComponent implements OnInit {
     return `status status-${status}`;
   }
 
+  countByStatus(status: Device['status']): number {
+    return this.devices().filter((device) => device.status === status).length;
+  }
+
+  getOnlineCount(): number {
+    return this.countByStatus('online');
+  }
+
+  getOfflineCount(): number {
+    return this.countByStatus('offline');
+  }
+
+  getWarningCount(): number {
+    return this.countByStatus('warning');
+  }
+
+  getTypeBreakdown(
+    status: Device['status'] | 'total',
+  ): Array<{ type: string; count: number; icon: string }> {
+    const relevantDevices =
+      status === 'total'
+        ? this.devices()
+        : this.devices().filter((device) => device.status === status);
+
+    const counts = new Map<string, number>();
+
+    relevantDevices.forEach((device) => {
+      counts.set(device.type, (counts.get(device.type) ?? 0) + 1);
+    });
+
+    return [...counts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([type, count]) => ({
+        type,
+        count,
+        icon: this.getDeviceTypeIcon(type),
+      }));
+  }
+
   getDeviceTypeClass(type: string): string {
     const normalized = type.toLowerCase();
 
@@ -170,7 +212,208 @@ export class DevicesComponent implements OnInit {
     return `${(seconds / 3600).toFixed(2)} h`;
   }
 
+  private parseMetricValue(value: string | number | null | undefined): number {
+    if (value === null || value === undefined || value === '') {
+      return 0;
+    }
+
+    if (typeof value === 'number') {
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    const parsed = Number.parseFloat(value.replace(/[^0-9.\-]/g, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  getTemperatureMetric(device: Device): number {
+    return this.parseMetricValue(device.temperature);
+  }
+
+  getMemoryMetric(device: Device): number {
+    return this.parseMetricValue(device.memory);
+  }
+
+  getAverageTemperature(): number {
+    const devices = this.devices();
+    if (devices.length === 0) {
+      return 0;
+    }
+
+    const total = devices.reduce((sum, device) => sum + this.getTemperatureMetric(device), 0);
+    return Number((total / devices.length).toFixed(1));
+  }
+
+  getAverageMemory(): number {
+    const devices = this.devices();
+    if (devices.length === 0) {
+      return 0;
+    }
+
+    const total = devices.reduce((sum, device) => sum + this.getMemoryMetric(device), 0);
+    return Number((total / devices.length).toFixed(1));
+  }
+
+  readonly temperatureOverviewChart = computed<ApexOptions>(() => {
+    const devices = this.devices();
+    const labels = devices.map((device) => device.name);
+    const values = devices.map((device) => this.getTemperatureMetric(device));
+
+    return {
+      series: [{ name: 'Temperature', data: values }],
+      chart: {
+        type: 'bar',
+        height: 320,
+        toolbar: { show: false },
+        background: 'transparent',
+        sparkline: { enabled: false },
+        animations: { enabled: true, speed: 500 },
+        parentHeightOffset: 0,
+      },
+      colors: ['#f97316'],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: 'vertical',
+          shadeIntensity: 0.35,
+          gradientToColors: ['#fb923c'],
+          opacityFrom: 0.95,
+          opacityTo: 0.75,
+          stops: [0, 100],
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          borderRadius: 14,
+          borderRadiusApplication: 'around',
+          barHeight: '52%',
+          distributed: false,
+          dataLabels: {
+            position: 'right',
+          },
+        },
+      },
+      xaxis: {
+        categories: labels.length > 0 ? labels : ['No devices'],
+        min: 0,
+        max: 100,
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      yaxis: {
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      grid: {
+        borderColor: '#e2e8f0',
+        strokeDashArray: 4,
+        xaxis: { lines: { show: true } },
+        yaxis: { lines: { show: false } },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (value: number) => `${value}°C`,
+        style: {
+          colors: ['#0f172a'],
+          fontSize: '10px',
+          fontWeight: 700,
+        },
+        offsetX: 0,
+        textAnchor: 'middle',
+      },
+      tooltip: {
+        enabled: true,
+        x: { show: false },
+        y: { formatter: (value: number) => `${value}°C` },
+      },
+    };
+  });
+
+  readonly memoryOverviewChart = computed<ApexOptions>(() => {
+    const devices = this.devices();
+    const labels = devices.map((device) => device.name);
+    const values = devices.map((device) => this.getMemoryMetric(device));
+
+    return {
+      series: [{ name: 'Memory', data: values }],
+      chart: {
+        type: 'bar',
+        height: 320,
+        toolbar: { show: false },
+        background: 'transparent',
+        sparkline: { enabled: false },
+        animations: { enabled: true, speed: 500 },
+        parentHeightOffset: 0,
+      },
+      colors: ['#4f46e5'],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: 'vertical',
+          shadeIntensity: 0.4,
+          gradientToColors: ['#6366f1'],
+          opacityFrom: 0.95,
+          opacityTo: 0.78,
+          stops: [0, 100],
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          borderRadius: 14,
+          borderRadiusApplication: 'around',
+          barHeight: '52%',
+          distributed: false,
+          dataLabels: {
+            position: 'right',
+          },
+        },
+      },
+      xaxis: {
+        categories: labels.length > 0 ? labels : ['No devices'],
+        min: 0,
+        max: 100,
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      yaxis: {
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      grid: {
+        borderColor: '#e2e8f0',
+        strokeDashArray: 4,
+        xaxis: { lines: { show: true } },
+        yaxis: { lines: { show: false } },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (value: number) => `${value.toFixed(2)}%`,
+        style: {
+          colors: ['#0f172a'],
+          fontSize: '10px',
+          fontWeight: 700,
+        },
+        offsetX: 0,
+        textAnchor: 'middle',
+      },
+      tooltip: {
+        enabled: true,
+        x: { show: false },
+        y: { formatter: (value: number) => `${value.toFixed(2)}%` },
+      },
+    };
+  });
+
   ngOnInit(): void {
-    this.deviceService.loadDevices().subscribe();
+    this.deviceService.loadDevices().subscribe((data) => {
+      console.log(data);
+    });
   }
 }
