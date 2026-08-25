@@ -207,6 +207,14 @@ export class DashboardComponent implements OnInit {
       .sort((a, b) => b.count - a.count);
   }
 
+  formatUptime(uptime: string | number | null | undefined): string {
+    const seconds = Number(uptime ?? 0);
+    if (!Number.isFinite(seconds)) {
+      return '0.00 h';
+    }
+    return `${(seconds / 3600).toFixed(2)} h`;
+  }
+
   ngOnInit(): void {
     this.dashboardService.loadDevicesStats().subscribe();
     this.dashboardService.loadDevicesDetailStats().subscribe();

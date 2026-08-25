@@ -47,7 +47,7 @@
               </div>
               <div class="chart-detail-meta">
                 <span>{{ device.ip }}</span>
-                <small>{{ device.uptime }}</small>
+                <small>{{ formatUptime(device.uptime) }}</small>
                 <small>{{ device.status }}</small>
                 <small>{{ device.version }}</small>
               </div>
@@ -161,50 +161,5 @@
         }
       </div>
     </div>
-  </div>
-
-  <div class="content-grid">
-    <aside class="bot-column">
-      <mat-card class="bot-card">
-        <div class="bot-header">
-          <div class="bot-title-row">
-            <div class="bot-avatar">i</div>
-            <div>
-              <h2>iZac</h2>
-              <small>Operations assistant</small>
-            </div>
-          </div>
-          <span class="assistant-status">Live</span>
-        </div>
-
-        <div class="assistant-overview">
-          <div class="overview-item">
-            <span>Devices</span>
-            <strong>{{ devicesStats()?.totalDevices ?? 0 }}</strong>
-          </div>
-        </div>
-
-        <div class="quick-actions">
-          <button mat-stroked-button type="button">Check health</button>
-          <button mat-stroked-button type="button">Network status</button>
-          <button mat-stroked-button type="button">Storage usage</button>
-          <button mat-stroked-button type="button">Show alerts</button>
-          <button mat-stroked-button type="button">Device status</button>
-          <button mat-stroked-button type="button">Sensor overview</button>
-          <button mat-stroked-button type="button">Cluster overview</button>
-        </div>
-
-        <div class="composer">
-          <input
-            type="text"
-            placeholder="Ask iZac to inspect the system..."
-            aria-label="Ask iZac"
-          />
-          <button mat-flat-button color="primary" type="button">
-            <mat-icon>send</mat-icon>
-          </button>
-        </div>
-      </mat-card>
-    </aside>
   </div>
 </section>

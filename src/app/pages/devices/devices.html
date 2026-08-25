@@ -65,27 +65,144 @@
     </button>
 
     <section class="summary-grid" aria-label="Device overview">
-      <article class="summary-card">
-        <span class="summary-label">Total</span>
+      <article class="summary-card summary-card-total">
+        <div class="summary-header">
+          <span class="summary-icon summary-icon-total"><mat-icon>devices</mat-icon></span>
+          <span class="summary-label">Total</span>
+        </div>
         <strong>{{ devices().length }}</strong>
+        <div class="summary-meta">
+          <span>{{ getTypeBreakdown('total').length }} types</span>
+          <span>{{ getOnlineCount() }} active</span>
+        </div>
       </article>
+
       <article class="summary-card summary-card-online">
-        <span class="summary-label">Online</span>
-        <strong>{{ devices().filter((device) => device.status === 'online').length }}</strong>
+        <div class="summary-header">
+          <span class="summary-icon summary-icon-online"><mat-icon>check_circle</mat-icon></span>
+          <span class="summary-label">Online</span>
+        </div>
+        <strong>{{ getOnlineCount() }}</strong>
+        <ul class="summary-list">
+          @if (getTypeBreakdown('online').length === 0) {
+            <li class="summary-empty">No online devices</li>
+          }
+          @for (item of getTypeBreakdown('online'); track item.type) {
+            <li>
+              <span class="summary-type-pill">
+                <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                {{ item.type }}
+              </span>
+              <strong>{{ item.count }}</strong>
+            </li>
+          }
+        </ul>
       </article>
+
       <article class="summary-card summary-card-offline">
-        <span class="summary-label">Offline</span>
-        <strong>{{ devices().filter((device) => device.status === 'offline').length }}</strong>
+        <div class="summary-header">
+          <span class="summary-icon summary-icon-offline"
+            ><mat-icon>signal_wifi_off</mat-icon></span
+          >
+          <span class="summary-label">Offline</span>
+        </div>
+        <strong>{{ getOfflineCount() }}</strong>
+        <ul class="summary-list">
+          @if (getTypeBreakdown('offline').length === 0) {
+            <li class="summary-empty">No offline devices</li>
+          }
+          @for (item of getTypeBreakdown('offline'); track item.type) {
+            <li>
+              <span class="summary-type-pill">
+                <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                {{ item.type }}
+              </span>
+              <strong>{{ item.count }}</strong>
+            </li>
+          }
+        </ul>
       </article>
+
       <article class="summary-card summary-card-alerts">
-        <span class="summary-label">Alerts</span>
-        <strong>{{ devices().filter((device) => device.status === 'warning').length }}</strong>
+        <div class="summary-header">
+          <span class="summary-icon summary-icon-alerts"><mat-icon>warning</mat-icon></span>
+          <span class="summary-label">Alerts</span>
+        </div>
+        <strong>{{ getWarningCount() }}</strong>
+        <ul class="summary-list">
+          @if (getTypeBreakdown('warning').length === 0) {
+            <li class="summary-empty">No alerts</li>
+          }
+          @for (item of getTypeBreakdown('warning'); track item.type) {
+            <li>
+              <span class="summary-type-pill">
+                <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+                {{ item.type }}
+              </span>
+              <strong>{{ item.count }}</strong>
+            </li>
+          }
+        </ul>
+      </article>
+    </section>
+
+    <section class="wide-charts-grid" aria-label="Device health overview">
+      <article class="wide-chart-card">
+        <div class="wide-chart-header">
+          <div>
+            <span class="wide-chart-label">Temperature</span>
+            <h3>Devices thermal overview</h3>
+          </div>
+          <span class="wide-chart-badge">Avg {{ getAverageTemperature() }}°C</span>
+        </div>
+
+        <apx-chart
+          [series]="temperatureOverviewChart().series"
+          [chart]="temperatureOverviewChart().chart"
+          [xaxis]="temperatureOverviewChart().xaxis"
+          [yaxis]="temperatureOverviewChart().yaxis"
+          [colors]="temperatureOverviewChart().colors"
+          [plotOptions]="temperatureOverviewChart().plotOptions"
+          [dataLabels]="temperatureOverviewChart().dataLabels"
+          [grid]="temperatureOverviewChart().grid"
+          [tooltip]="temperatureOverviewChart().tooltip"
+          class="wide-chart"
+        ></apx-chart>
+      </article>
+
+      <article class="wide-chart-card">
+        <div class="wide-chart-header">
+          <div>
+            <span class="wide-chart-label">Memory</span>
+            <h3>Devices memory overview</h3>
+          </div>
+          <span class="wide-chart-badge">Avg {{ getAverageMemory() }}%</span>
+        </div>
+
+        <apx-chart
+          [series]="memoryOverviewChart().series"
+          [chart]="memoryOverviewChart().chart"
+          [xaxis]="memoryOverviewChart().xaxis"
+          [yaxis]="memoryOverviewChart().yaxis"
+          [colors]="memoryOverviewChart().colors"
+          [plotOptions]="memoryOverviewChart().plotOptions"
+          [dataLabels]="memoryOverviewChart().dataLabels"
+          [grid]="memoryOverviewChart().grid"
+          [tooltip]="memoryOverviewChart().tooltip"
+          class="wide-chart"
+        ></apx-chart>
       </article>
     </section>
 
     <section class="devices-grid">
       @for (device of devices(); track device.id) {
-        <mat-card class="device-card" appearance="raised">
+        <mat-card
+          class="device-card"
+          [class.device-card-online]="device.status === 'online'"
+          [class.device-card-warning]="device.status === 'warning'"
+          [class.device-card-offline]="device.status === 'offline'"
+          appearance="raised"
+        >
           <div class="card-topbar">
             <span class="device-card-badge" [class]="getDeviceTypeClass(device.type)">
               <mat-icon class="badge-icon" aria-hidden="true">{{
@@ -116,14 +233,6 @@
               <div class="metric-item">
                 <span class="metric-label">Uptime</span>
                 <strong>{{ formatUptime(device.uptime) }}</strong>
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Temp</span>
-                <strong>{{ device.temperature }} °C</strong>
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Memory</span>
-                <strong>{{ device.memory }}</strong>
               </div>
               <div class="metric-item">
                 <span class="metric-label">Humidity</span>
