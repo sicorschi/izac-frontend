@@ -124,7 +124,7 @@
   </mat-drawer>
 
   <mat-drawer-content class="page-content">
-    <button mat-flat-button color="primary" class="add-button" (click)="drawer.open()">
+    <button mat-flat-button color="secondary" class="add-button" (click)="drawer.open()">
       <mat-icon>add</mat-icon>
       New printer
     </button>
@@ -151,12 +151,19 @@
     <section class="printers-grid">
       @for (printer of printers; track printer.id) {
         <mat-card class="printer-card" appearance="raised">
-          <div class="card-head">
-            <div>
-              <p class="card-type">{{ printer.model }}</p>
-              <h3>{{ printer.name }}</h3>
-            </div>
+          <div class="card-topbar">
+            <span class="printer-card-badge">
+              <mat-icon aria-hidden="true">precision_manufacturing</mat-icon>
+              {{ printer.model }}
+            </span>
             <span [class]="getStatusClass(printer.status)">{{ printer.status }}</span>
+          </div>
+
+          <div class="card-head">
+            <div class="printer-card-title-group">
+              <h3>{{ printer.name }}</h3>
+              <small>Printer #{{ printer.id }}</small>
+            </div>
           </div>
 
           <mat-card-content>
@@ -173,25 +180,33 @@
                 <small>{{ printer.progress }}%</small>
               </div>
 
-              <dl class="printer-meta">
-                <div>
-                  <dt>Material</dt>
-                  <dd>{{ printer.material }}</dd>
+              <div class="printer-meta-grid">
+                <div class="metric-item">
+                  <span class="metric-label">Material</span>
+                  <strong>{{ printer.material }}</strong>
                 </div>
-                <div>
-                  <dt>Temp</dt>
-                  <dd>{{ printer.temp }}</dd>
+                <div class="metric-item">
+                  <span class="metric-label">Temp</span>
+                  <strong>{{ printer.temp }}</strong>
                 </div>
-                <div>
-                  <dt>Queue</dt>
-                  <dd>{{ printer.queue }} jobs</dd>
+                <div class="metric-item">
+                  <span class="metric-label">Queue</span>
+                  <strong>{{ printer.queue }} jobs</strong>
                 </div>
-              </dl>
+              </div>
             </div>
           </mat-card-content>
 
           <mat-card-actions align="end">
-            <button mat-stroked-button color="primary" type="button">Details</button>
+            <button
+              mat-flat-button
+              color="secondary"
+              class="add-button detail-button"
+              type="button"
+            >
+              <mat-icon>visibility</mat-icon>
+              Details
+            </button>
           </mat-card-actions>
         </mat-card>
       }

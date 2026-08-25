@@ -8,4 +8,9 @@ export interface Device {
   uptime: string;
   temperature: string;
   version: string;
+  memory: string;
+  humidity: string;
+  lastSeen: string;
+  createdAt: string;
+  updatedAt: string;
 }

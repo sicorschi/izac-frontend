@@ -1,35 +1,60 @@
 <section class="dashboard-shell">
-  <div class="charts-grid">
-    <div class="chart-card">
+  <div class="summary-grid">
+    @for (deviceMetric of deviceStatsCards(); track deviceMetric.label) {
+      <article class="metric-card accent-{{ deviceMetric.accent }}">
+        <div class="metric-icon">
+          <mat-icon>{{ deviceMetric.icon }}</mat-icon>
+        </div>
+
+        <div class="metric-copy">
+          <span>{{ deviceMetric.label }}</span>
+          <strong>{{ deviceMetric.value }}</strong>
+          <small>{{ deviceMetric.delta }}</small>
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="charts-column">
+    <div class="chart-card chart-card-wide">
       <div class="chart-header">
         <h3>Devices activity</h3>
         <span>Current state</span>
       </div>
-      <div class="summary-grid">
-        @for (deviceMetric of deviceStatsCards(); track deviceMetric.label) {
-          <article class="metric-card accent-{{ deviceMetric.accent }}">
-            <div class="metric-icon">
-              <mat-icon>{{ deviceMetric.icon }}</mat-icon>
-            </div>
 
-            <div class="metric-copy">
-              <span>{{ deviceMetric.label }}</span>
-              <strong>{{ deviceMetric.value }}</strong>
-              <small>{{ deviceMetric.delta }}</small>
+      <div class="chart-body">
+        <div class="chart-wrap">
+          <apx-chart
+            style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+            [series]="deviceStatusChart().series"
+            [chart]="deviceStatusChart().chart"
+            [labels]="deviceStatusChart().labels"
+            [colors]="deviceStatusChart().colors"
+            [legend]="deviceStatusChart().legend"
+            [dataLabels]="deviceStatusChart().dataLabels"
+            [plotOptions]="deviceStatusChart().plotOptions"
+          ></apx-chart>
+        </div>
+
+        <aside class="chart-detail-panel">
+          <div class="detail-panel-header">Top endpoints</div>
+          @for (device of activeDeviceHighlights(); track device.id) {
+            <div class="chart-detail-row">
+              <div class="detail-copy">
+                <strong>{{ device.name }}</strong>
+                <small>{{ device.type }}</small>
+                <small>{{ device.location }}</small>
+              </div>
+              <div class="chart-detail-meta">
+                <span>{{ device.ip }}</span>
+                <small>{{ device.uptime }}</small>
+                <small>{{ device.status }}</small>
+                <small>{{ device.version }}</small>
+              </div>
             </div>
-          </article>
-        }
+          }
+        </aside>
       </div>
-      <apx-chart
-        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
-        [series]="deviceStatusChart().series"
-        [chart]="deviceStatusChart().chart"
-        [labels]="deviceStatusChart().labels"
-        [colors]="deviceStatusChart().colors"
-        [legend]="deviceStatusChart().legend"
-        [dataLabels]="deviceStatusChart().dataLabels"
-        [plotOptions]="deviceStatusChart().plotOptions"
-      ></apx-chart>
 
       <div class="chart-legend">
         @for (item of deviceChartLegend(); track item.label) {
@@ -42,65 +67,41 @@
       </div>
     </div>
 
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Sensors activity</h3>
-        <span>Current status</span>
-      </div>
-      <div class="summary-grid">
-        @for (sensorMetric of sensorStatsCards(); track sensorMetric.label) {
-          <article class="metric-card accent-{{ sensorMetric.accent }}">
-            <div class="metric-icon">
-              <mat-icon>{{ sensorMetric.icon }}</mat-icon>
-            </div>
-
-            <div class="metric-copy">
-              <span>{{ sensorMetric.label }}</span>
-              <strong>{{ sensorMetric.value }}</strong>
-              <small>{{ sensorMetric.delta }}</small>
-            </div>
-          </article>
-        }
-      </div>
-      <apx-chart
-        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
-        [series]="sensorHealthChart().series"
-        [chart]="sensorHealthChart().chart"
-        [labels]="sensorHealthChart().labels"
-        [colors]="sensorHealthChart().colors"
-        [legend]="sensorHealthChart().legend"
-        [dataLabels]="sensorHealthChart().dataLabels"
-        [plotOptions]="sensorHealthChart().plotOptions"
-      ></apx-chart>
-
-      <div class="chart-legend">
-        @for (item of sensorChartLegend(); track item.label) {
-          <div class="chart-legend-item">
-            <span class="legend-swatch" [style.background]="item.color"></span>
-            <span>{{ item.label }}</span>
-            <strong>{{ item.value }}</strong>
-          </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  <div class="charts-grid">
-    <div class="chart-card">
+    <div class="chart-card chart-card-wide">
       <div class="chart-header">
         <h3>Active Devices by type</h3>
         <span>Connected</span>
       </div>
-      <apx-chart
-        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
-        [series]="onlineDeviceTypesChart().series"
-        [chart]="onlineDeviceTypesChart().chart"
-        [labels]="onlineDeviceTypesChart().labels"
-        [colors]="onlineDeviceTypesChart().colors"
-        [legend]="onlineDeviceTypesChart().legend"
-        [dataLabels]="onlineDeviceTypesChart().dataLabels"
-        [plotOptions]="onlineDeviceTypesChart().plotOptions"
-      ></apx-chart>
+
+      <div class="chart-body">
+        <div class="chart-wrap">
+          <apx-chart
+            style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+            [series]="onlineDeviceTypesChart().series"
+            [chart]="onlineDeviceTypesChart().chart"
+            [labels]="onlineDeviceTypesChart().labels"
+            [colors]="onlineDeviceTypesChart().colors"
+            [legend]="onlineDeviceTypesChart().legend"
+            [dataLabels]="onlineDeviceTypesChart().dataLabels"
+            [plotOptions]="onlineDeviceTypesChart().plotOptions"
+          ></apx-chart>
+        </div>
+
+        <aside class="chart-detail-panel">
+          <div class="detail-panel-header">Connected devices</div>
+          @for (device of activeDeviceHighlights(); track device.id) {
+            <div class="chart-detail-row">
+              <div class="detail-copy">
+                <strong>{{ device.name }}</strong>
+                <small>{{ device.location }}</small>
+              </div>
+              <div class="chart-detail-meta">
+                <span>{{ device.version }}</span>
+              </div>
+            </div>
+          }
+        </aside>
+      </div>
 
       <div class="chart-legend">
         @for (item of onlineDeviceTypesLegend(); track item.label) {
@@ -113,21 +114,42 @@
       </div>
     </div>
 
-    <div class="chart-card">
+    <div class="chart-card chart-card-wide">
       <div class="chart-header">
         <h3>Offline Devices by type</h3>
         <span>Needs attention</span>
       </div>
-      <apx-chart
-        style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
-        [series]="offlineDeviceTypesChart().series"
-        [chart]="offlineDeviceTypesChart().chart"
-        [labels]="offlineDeviceTypesChart().labels"
-        [colors]="offlineDeviceTypesChart().colors"
-        [legend]="offlineDeviceTypesChart().legend"
-        [dataLabels]="offlineDeviceTypesChart().dataLabels"
-        [plotOptions]="offlineDeviceTypesChart().plotOptions"
-      ></apx-chart>
+
+      <div class="chart-body">
+        <div class="chart-wrap">
+          <apx-chart
+            style="display: block; width: 100%; max-width: 420px; margin: 0 auto"
+            [series]="offlineDeviceTypesChart().series"
+            [chart]="offlineDeviceTypesChart().chart"
+            [labels]="offlineDeviceTypesChart().labels"
+            [colors]="offlineDeviceTypesChart().colors"
+            [legend]="offlineDeviceTypesChart().legend"
+            [dataLabels]="offlineDeviceTypesChart().dataLabels"
+            [plotOptions]="offlineDeviceTypesChart().plotOptions"
+          ></apx-chart>
+        </div>
+
+        <aside class="chart-detail-panel">
+          <div class="detail-panel-header">Action queue</div>
+          @for (device of offlineDeviceHighlights(); track device.id) {
+            <div class="chart-detail-row">
+              <div class="detail-copy">
+                <strong>{{ device.name }}</strong>
+                <small>{{ device.location }}</small>
+              </div>
+              <div class="chart-detail-meta">
+                <span>{{ device.ip }}</span>
+                <small>{{ device.uptime }}</small>
+              </div>
+            </div>
+          }
+        </aside>
+      </div>
 
       <div class="chart-legend">
         @for (item of offlineDeviceTypesLegend(); track item.label) {
@@ -159,10 +181,6 @@
           <div class="overview-item">
             <span>Devices</span>
             <strong>{{ devicesStats()?.totalDevices ?? 0 }}</strong>
-          </div>
-          <div class="overview-item">
-            <span>Sensors</span>
-            <strong>{{ sensorsStats()?.totalSensors ?? 0 }}</strong>
           </div>
         </div>
 

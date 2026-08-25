@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import type { CreateDeviceRequest } from '../../models/devices/create-request.types';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -33,15 +34,18 @@ export class DevicesComponent implements OnInit {
   @ViewChild('drawer') private readonly drawer!: MatDrawer;
   isEditing = false;
   selectedDeviceId: number | null = null;
-  newDevice: {
-    name: string;
-    type: string;
-    ip: string;
-  } = {
+  newDevice: CreateDeviceRequest = {
     name: '',
     type: 'Gateway',
-    ip: '',
   };
+
+  readonly deviceTypeOptions = [
+    { value: 'Gateway', label: 'Gateway', icon: 'router' },
+    { value: 'Edge Device', label: 'Edge device', icon: 'memory' },
+    { value: 'Controller', label: 'Controller', icon: 'tune' },
+    { value: 'Cluster', label: 'Cluster', icon: 'hub' },
+    { value: 'Edge AI', label: 'Edge AI', icon: 'smart_toy' },
+  ];
 
   openAddDrawer(): void {
     this.isEditing = false;
@@ -56,20 +60,17 @@ export class DevicesComponent implements OnInit {
     this.newDevice = {
       name: device.name,
       type: device.type,
-      ip: device.ip,
     };
     this.drawer.open();
   }
 
   saveDevice(): void {
-    if (!this.newDevice.name.trim() || !this.newDevice.type.trim() || !this.newDevice.ip.trim()) {
+    if (!this.newDevice.name.trim() || !this.newDevice.type.trim()) {
       return;
     }
-
     const payload = {
       name: this.newDevice.name.trim(),
       type: this.newDevice.type,
-      ip: this.newDevice.ip.trim(),
     };
 
     const request =
@@ -102,12 +103,71 @@ export class DevicesComponent implements OnInit {
     this.newDevice = {
       name: '',
       type: 'Gateway',
-      ip: '',
     };
   }
 
   getStatusClass(status: Device['status']): string {
     return `status status-${status}`;
+  }
+
+  getDeviceTypeClass(type: string): string {
+    const normalized = type.toLowerCase();
+
+    if (normalized.includes('cluster')) {
+      return 'device-badge-cluster';
+    }
+
+    if (normalized.includes('gateway')) {
+      return 'device-badge-gateway';
+    }
+
+    if (normalized.includes('controller')) {
+      return 'device-badge-controller';
+    }
+
+    if (normalized.includes('edge ai')) {
+      return 'device-badge-edge-ai';
+    }
+
+    if (normalized.includes('edge')) {
+      return 'device-badge-edge';
+    }
+
+    return 'device-badge-default';
+  }
+
+  getDeviceTypeIcon(type: string): string {
+    const normalized = type.toLowerCase();
+
+    if (normalized.includes('cluster')) {
+      return 'hub';
+    }
+
+    if (normalized.includes('gateway')) {
+      return 'router';
+    }
+
+    if (normalized.includes('controller')) {
+      return 'tune';
+    }
+
+    if (normalized.includes('edge ai')) {
+      return 'smart_toy';
+    }
+
+    if (normalized.includes('edge')) {
+      return 'memory';
+    }
+
+    return 'devices';
+  }
+
+  formatUptime(uptime: string | number | null | undefined): string {
+    const seconds = Number(uptime ?? 0);
+    if (!Number.isFinite(seconds)) {
+      return '0.00 h';
+    }
+    return `${(seconds / 3600).toFixed(2)} h`;
   }
 
   ngOnInit(): void {

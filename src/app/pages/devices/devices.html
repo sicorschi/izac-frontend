@@ -31,24 +31,22 @@
           name="type"
           aria-labelledby="device-type-label"
         >
-          <mat-option value="Gateway">Gateway</mat-option>
-          <mat-option value="Edge Device">Edge device</mat-option>
-          <mat-option value="Controller">Controller</mat-option>
-          <mat-option value="Cluster">Cluster</mat-option>
-          <mat-option value="Edge AI">Edge AI</mat-option>
-        </mat-select>
-      </mat-form-field>
+          <mat-select-trigger>
+            <span class="device-select-trigger">
+              <mat-icon aria-hidden="true">{{ getDeviceTypeIcon(newDevice.type) }}</mat-icon>
+              <span>{{ newDevice.type }}</span>
+            </span>
+          </mat-select-trigger>
 
-      <mat-form-field appearance="outline">
-        <mat-label id="device-ip-label">IP address</mat-label>
-        <input
-          id="device-ip"
-          matInput
-          [(ngModel)]="newDevice.ip"
-          name="ip"
-          aria-labelledby="device-ip-label"
-          required
-        />
+          @for (option of deviceTypeOptions; track option.value) {
+            <mat-option [value]="option.value">
+              <span class="device-type-option">
+                <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                <span>{{ option.label }}</span>
+              </span>
+            </mat-option>
+          }
+        </mat-select>
       </mat-form-field>
 
       <div class="drawer-actions">
@@ -89,7 +87,12 @@
       @for (device of devices(); track device.id) {
         <mat-card class="device-card" appearance="raised">
           <div class="card-topbar">
-            <span class="device-card-badge">{{ device.type }}</span>
+            <span class="device-card-badge" [class]="getDeviceTypeClass(device.type)">
+              <mat-icon class="badge-icon" aria-hidden="true">{{
+                getDeviceTypeIcon(device.type)
+              }}</mat-icon>
+              {{ device.type }}
+            </span>
             <span [class]="getStatusClass(device.status)">{{ device.status }}</span>
           </div>
 
@@ -112,11 +115,19 @@
               </div>
               <div class="metric-item">
                 <span class="metric-label">Uptime</span>
-                <strong>{{ device.uptime }}</strong>
+                <strong>{{ formatUptime(device.uptime) }}</strong>
               </div>
               <div class="metric-item">
                 <span class="metric-label">Temp</span>
-                <strong>{{ device.temperature }}</strong>
+                <strong>{{ device.temperature }} °C</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Memory</span>
+                <strong>{{ device.memory }}</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-label">Humidity</span>
+                <strong>{{ device.humidity }} %</strong>
               </div>
               <div class="metric-item">
                 <span class="metric-label">Version</span>
