@@ -46,4 +46,8 @@ export class DeviceService {
   fetchDeviceById(id: number): Observable<Device> {
     return this.http.get<Device>(`${this.host}/${id}`);
   }
+
+  publishSmartLightCommand(action: string): Observable<void> {
+    return this.http.post<void>(`${this.host}/smart-light`, { action });
+  }
 }

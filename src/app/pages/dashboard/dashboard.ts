@@ -4,16 +4,26 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DashboardService } from '../../services/dashboard.service';
+import { DeviceService } from '../../services/device.service';
 
 @Component({
-  imports: [MatCardModule, MatButtonModule, MatIconModule, NgApexchartsModule],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSlideToggleModule,
+    NgApexchartsModule,
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
 export class DashboardComponent implements OnInit {
   private readonly dashboardService = inject(DashboardService);
+  private readonly deviceService = inject(DeviceService);
   readonly devicesStats = this.dashboardService.devicesStats;
+  smartLightOn = false;
   readonly devicesDetailStats = this.dashboardService.devicesDetailStats;
   readonly botMessages = [
     { from: 'iZac', text: 'Good morning. I am monitoring 248 devices and 14 active print jobs.' },
@@ -295,6 +305,17 @@ export class DashboardComponent implements OnInit {
       return '0.00 h';
     }
     return `${(seconds / 3600).toFixed(2)} h`;
+  }
+
+  toggleSmartLight(isOn: boolean): void {
+    const action = isOn ? 'on' : 'off';
+    this.smartLightOn = isOn;
+
+    this.deviceService.publishSmartLightCommand(action).subscribe({
+      error: () => {
+        this.smartLightOn = !isOn;
+      },
+    });
   }
 
   ngOnInit(): void {

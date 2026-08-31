@@ -1,5 +1,39 @@
 <section class="dashboard-shell">
   <div class="charts-column">
+    <div
+      class="chart-card smart-light-card"
+      [class.smart-light-card--on]="smartLightOn"
+      [class.smart-light-card--off]="!smartLightOn"
+    >
+      <div class="smart-light-header">
+        <div class="smart-light-device">
+          <div class="smart-light-icon-wrap">
+            <mat-icon class="smart-light-icon">lightbulb</mat-icon>
+          </div>
+          <div class="smart-light-copy">
+            <span class="smart-light-label">Smart Light 01</span>
+            <small class="smart-light-subtitle">Primary room</small>
+          </div>
+        </div>
+
+        <span
+          class="smart-light-status"
+          [class.status-on]="smartLightOn"
+          [class.status-off]="!smartLightOn"
+        >
+          {{ smartLightOn ? 'On' : 'Off' }}
+        </span>
+      </div>
+
+      <div class="smart-light-row">
+        <mat-slide-toggle
+          [checked]="smartLightOn"
+          (change)="toggleSmartLight($event.checked)"
+          aria-label="Toggle Smart Light 01"
+        ></mat-slide-toggle>
+      </div>
+    </div>
+
     <div class="chart-card chart-card-wide">
       <div class="chart-header">
         <h3>Devices activity</h3>
