@@ -34,6 +34,46 @@ export class DashboardComponent implements OnInit {
     },
   ];
   readonly quickActions = ['Check alerts', 'Restart cycle', 'Print status', 'Schedule maintenance'];
+  readonly indoorClimate = [
+    { room: 'Saloon', icon: 'weekend', temp: 22.4, humidity: 48 },
+    { room: 'TheCave', icon: 'bed', temp: 20.8, humidity: 52 },
+    { room: 'Primary', icon: 'desktop_windows', temp: 21.6, humidity: 45 },
+    { room: 'Kitchen', icon: 'kitchen', temp: 24.1, humidity: 55 },
+  ];
+  readonly outdoorClimate = {
+    city: 'Madrid',
+    country: 'Spain',
+    temp: 19.2,
+    humidity: 66,
+    condition: 'Cloudy',
+    feelsLike: 18.8,
+    wind: 14,
+    uv: 3,
+    precipitation: 42,
+    sunrise: '06:34',
+    sunset: '20:51',
+    image: '/madrid_mobile.webp',
+  };
+  readonly recommendations = [
+    {
+      title: 'Rain alert',
+      text: 'Take the umbrella before leaving home.',
+      icon: 'umbrella',
+      tone: 'warning',
+    },
+    {
+      title: 'Sun exposure',
+      text: 'A sunny day ahead — keep the hat and sunglasses ready.',
+      icon: 'wb_sunny',
+      tone: 'success',
+    },
+    {
+      title: 'Air quality',
+      text: 'Bedroom humidity is elevated — ventilate briefly.',
+      icon: 'air',
+      tone: 'info',
+    },
+  ];
   readonly deviceStatsCards = computed(() => {
     const stats = this.devicesStats();
     if (!stats) {
@@ -126,16 +166,16 @@ export class DashboardComponent implements OnInit {
           id: 'no-active-devices',
           name: 'No active devices',
           type: 'Waiting for telemetry',
-          location: '—',
-          ip: '—',
+          location: '',
+          ip: '',
           uptime: '0.00',
-          version: '—',
+          version: '',
           status: 'pending',
         },
       ];
     }
 
-    return activeDevices.slice(0, 4).map((device) => ({
+    return activeDevices.map((device) => ({
       id: device.id,
       name: device.name,
       type: device.type,
@@ -156,10 +196,10 @@ export class DashboardComponent implements OnInit {
           id: 'no-offline-devices',
           name: 'No offline devices',
           type: 'All systems healthy',
-          location: '—',
-          ip: '—',
+          location: '',
+          ip: '',
           uptime: '0.00',
-          version: '—',
+          version: '',
           status: 'healthy',
         },
       ];

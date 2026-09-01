@@ -16,7 +16,14 @@ export enum HeaderIcons {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule, RouterLink, RouterLinkActive],
+  imports: [
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSidenavModule,
+    RouterLink,
+    RouterLinkActive,
+  ],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
@@ -29,14 +36,13 @@ export class HeaderComponent {
   navItems = [
     { label: 'Dashboard', route: '/', icon: HeaderIcons.Home },
     { label: 'Devices', route: '/devices', icon: HeaderIcons.Devices },
-    { label: 'Sensors', route: '/sensors', icon: HeaderIcons.Sensors },
     { label: 'Infrastructures', route: '/infrastructures', icon: HeaderIcons.Infrastructures },
     { label: 'Builders', route: '/builders', icon: HeaderIcons.Builders },
   ];
 
   currentNavItem = this.navItems[0];
 
-  constructor(private router: Router) {
+  constructor(private readonly router: Router) {
     this.updateCurrentRoute(this.router.url);
 
     this.router.events.subscribe((event) => {
@@ -67,4 +73,3 @@ export class HeaderComponent {
     this.currentNavItem = match ?? this.navItems[0];
   }
 }
-
