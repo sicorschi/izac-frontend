@@ -11,11 +11,13 @@
             <mat-icon class="smart-light-icon">lightbulb</mat-icon>
           </div>
           <div class="smart-light-copy">
-            <span class="smart-light-label">Smart Light 01</span>
-            <small class="smart-light-subtitle">Primary room</small>
+            <span class="smart-light-label">Kitchen</span>
+            <small class="smart-light-subtitle">Light 01</small>
           </div>
         </div>
+      </div>
 
+      <div class="smart-light-row">
         <span
           class="smart-light-status"
           [class.status-on]="smartLightOn"
@@ -23,14 +25,114 @@
         >
           {{ smartLightOn ? 'On' : 'Off' }}
         </span>
-      </div>
-
-      <div class="smart-light-row">
         <mat-slide-toggle
+          class="smart-light-toggle"
           [checked]="smartLightOn"
           (change)="toggleSmartLight($event.checked)"
           aria-label="Toggle Smart Light 01"
         ></mat-slide-toggle>
+      </div>
+    </div>
+
+    <div class="chart-card climate-card">
+      <div class="climate-grid">
+        <div class="climate-panel">
+          <div class="room-list">
+            @for (room of indoorClimate; track room.room) {
+              <div class="room-item">
+                <div class="room-meta">
+                  <div class="room-title">
+                    <mat-icon>{{ room.icon }}</mat-icon>
+                    <strong>{{ room.room }}</strong>
+                  </div>
+
+                  <div class="room-metrics">
+                    <span class="climate-pill">
+                      <mat-icon>device_thermostat</mat-icon>
+                      {{ room.temp }}°C
+                    </span>
+                    <span class="climate-pill humidity-pill">
+                      <mat-icon>water_drop</mat-icon>
+                      {{ room.humidity }}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="climate-panel outdoor-panel">
+          <div class="weather-hero" [style.background-image]="'url(' + outdoorClimate.image + ')'">
+            <div class="weather-hero-overlay">
+              <span class="weather-badge">{{ outdoorClimate.condition }}</span>
+              <strong>{{ outdoorClimate.city }}</strong>
+              <small>{{ outdoorClimate.country }}</small>
+            </div>
+          </div>
+
+          <div class="weather-summary">
+            <div class="weather-main">
+              <span class="weather-temp">{{ outdoorClimate.temp }}°C</span>
+              <small>Feels like {{ outdoorClimate.feelsLike }}°C</small>
+            </div>
+
+            <div class="weather-stats">
+              <span>
+                <mat-icon>thermostat</mat-icon>
+                {{ outdoorClimate.temp }}°C
+              </span>
+              <span>
+                <mat-icon>water_drop</mat-icon>
+                {{ outdoorClimate.humidity }}%
+              </span>
+              <span>
+                <mat-icon>air</mat-icon>
+                {{ outdoorClimate.wind }} km/h
+              </span>
+            </div>
+          </div>
+
+          <div class="city-details">
+            <div>
+              <small>Sunrise</small>
+              <strong>{{ outdoorClimate.sunrise }}</strong>
+            </div>
+            <div>
+              <small>Sunset</small>
+              <strong>{{ outdoorClimate.sunset }}</strong>
+            </div>
+            <div>
+              <small>Rain</small>
+              <strong>{{ outdoorClimate.precipitation }}%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="recommendations-block">
+        <div class="climate-panel-header recommendations-header">
+          <div class="recommendations-title">
+            <mat-icon>tips_and_updates</mat-icon>
+            <h4>Recommendations</h4>
+          </div>
+          <span>Today</span>
+        </div>
+
+        <div class="recommendations-list">
+          @for (recommendation of recommendations; track recommendation.title) {
+            <div class="recommendation-item recommendation-{{ recommendation.tone }}">
+              <div class="recommendation-icon">
+                <mat-icon>{{ recommendation.icon }}</mat-icon>
+              </div>
+
+              <div class="recommendation-copy">
+                <strong>{{ recommendation.title }}</strong>
+                <span>{{ recommendation.text }}</span>
+              </div>
+            </div>
+          }
+        </div>
       </div>
     </div>
 
@@ -98,8 +200,8 @@
             ></span>
             <div class="device-legend-copy">
               <strong>{{ device.name }}</strong>
-              <small>{{ device.type }} · {{ device.location }}</small>
-              <small>{{ device.ip }} · {{ device.version }}</small>
+              <small>{{ device.type }} {{ device.location }}</small>
+              <small>{{ device.ip }} {{ device.version }}</small>
             </div>
           </div>
         }
@@ -138,8 +240,8 @@
             ></span>
             <div class="device-legend-copy">
               <strong>{{ device.name }}</strong>
-              <small>{{ device.type }} · {{ device.location }}</small>
-              <small>{{ device.ip }} · {{ device.version }}</small>
+              <small>{{ device.type }} {{ device.location }}</small>
+              <small>{{ device.ip }} {{ device.version }}</small>
             </div>
           </div>
         }
