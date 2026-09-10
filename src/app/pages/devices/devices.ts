@@ -221,7 +221,7 @@ export class DevicesComponent implements OnInit {
       return Number.isFinite(value) ? value : 0;
     }
 
-    const parsed = Number.parseFloat(value.replace(/[^0-9.\-]/g, ''));
+    const parsed = Number.parseFloat(value.replace(/[^0-9.-]/g, ''));
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
@@ -231,6 +231,27 @@ export class DevicesComponent implements OnInit {
 
   getMemoryMetric(device: Device): number {
     return this.parseMetricValue(device.memory);
+  }
+
+  getHumidityMetric(device: Device): number {
+    return this.parseMetricValue(device.humidity);
+  }
+
+  getDeviceAxisLabel(device: Device): string {
+    const timestampSource =
+      device.timestamp ?? device.lastSeen ?? device.updatedAt ?? device.createdAt;
+    const timestamp = timestampSource ? new Date(timestampSource) : null;
+    const formattedTime =
+      timestamp && !Number.isNaN(timestamp.getTime())
+        ? timestamp.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+          })
+        : 'N/A';
+
+    return `${device.name} - \n${formattedTime}`;
   }
 
   getAverageTemperature(): number {
@@ -253,9 +274,19 @@ export class DevicesComponent implements OnInit {
     return Number((total / devices.length).toFixed(1));
   }
 
+  getAverageHumidity(): number {
+    const devices = this.devices();
+    if (devices.length === 0) {
+      return 0;
+    }
+
+    const total = devices.reduce((sum, device) => sum + this.getHumidityMetric(device), 0);
+    return Number((total / devices.length).toFixed(1));
+  }
+
   readonly temperatureOverviewChart = computed<ApexOptions>(() => {
     const devices = this.devices();
-    const labels = devices.map((device) => device.name);
+    const labels = devices.map((device) => this.getDeviceAxisLabel(device));
     const values = devices.map((device) => this.getTemperatureMetric(device));
 
     return {
@@ -284,13 +315,13 @@ export class DevicesComponent implements OnInit {
       },
       plotOptions: {
         bar: {
-          horizontal: true,
-          borderRadius: 14,
+          horizontal: false,
+          borderRadius: 12,
           borderRadiusApplication: 'around',
-          barHeight: '52%',
+          columnWidth: '52%',
           distributed: false,
           dataLabels: {
-            position: 'right',
+            position: 'top',
           },
         },
       },
@@ -334,7 +365,7 @@ export class DevicesComponent implements OnInit {
 
   readonly memoryOverviewChart = computed<ApexOptions>(() => {
     const devices = this.devices();
-    const labels = devices.map((device) => device.name);
+    const labels = devices.map((device) => this.getDeviceAxisLabel(device));
     const values = devices.map((device) => this.getMemoryMetric(device));
 
     return {
@@ -363,13 +394,92 @@ export class DevicesComponent implements OnInit {
       },
       plotOptions: {
         bar: {
-          horizontal: true,
-          borderRadius: 14,
+          horizontal: false,
+          borderRadius: 12,
           borderRadiusApplication: 'around',
-          barHeight: '52%',
+          columnWidth: '52%',
           distributed: false,
           dataLabels: {
-            position: 'right',
+            position: 'top',
+          },
+        },
+      },
+      xaxis: {
+        categories: labels.length > 0 ? labels : ['No devices'],
+        min: 0,
+        max: 100,
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      yaxis: {
+        labels: { style: { colors: '#475569', fontSize: '10px' } },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+      },
+      grid: {
+        borderColor: '#e2e8f0',
+        strokeDashArray: 4,
+        xaxis: { lines: { show: true } },
+        yaxis: { lines: { show: false } },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (value: number) => `${value.toFixed(2)}%`,
+        style: {
+          colors: ['#0f172a'],
+          fontSize: '10px',
+          fontWeight: 700,
+        },
+        offsetX: 0,
+        textAnchor: 'middle',
+      },
+      tooltip: {
+        enabled: true,
+        x: { show: false },
+        y: { formatter: (value: number) => `${value.toFixed(2)}%` },
+      },
+    };
+  });
+
+  readonly humidityOverviewChart = computed<ApexOptions>(() => {
+    const devices = this.devices();
+    const labels = devices.map((device) => this.getDeviceAxisLabel(device));
+    const values = devices.map((device) => this.getHumidityMetric(device));
+
+    return {
+      series: [{ name: 'Humidity', data: values }],
+      chart: {
+        type: 'bar',
+        height: 320,
+        toolbar: { show: false },
+        background: 'transparent',
+        sparkline: { enabled: false },
+        animations: { enabled: true, speed: 500 },
+        parentHeightOffset: 0,
+      },
+      colors: ['#0ea5e9'],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'light',
+          type: 'vertical',
+          shadeIntensity: 0.4,
+          gradientToColors: ['#38bdf8'],
+          opacityFrom: 0.95,
+          opacityTo: 0.78,
+          stops: [0, 100],
+        },
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          borderRadius: 12,
+          borderRadiusApplication: 'around',
+          columnWidth: '52%',
+          distributed: false,
+          dataLabels: {
+            position: 'top',
           },
         },
       },

@@ -25,9 +25,6 @@ export class LoginComponent {
   password = '';
 
   login(): void {
-    console.log('Login attempt:', {
-      username: this.username,
-      password: this.password,
-    });
+    console.log('Login attempt');
   }
 }

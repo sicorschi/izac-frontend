@@ -218,12 +218,12 @@ export class DashboardComponent implements OnInit {
   });
 
   readonly onlineDeviceTypesChart = computed<ApexOptions>(() => {
-    const activeDevices = (this.devicesDetailStats()?.activeDevices ?? []).slice(0, 6);
-    const chartEntries = activeDevices.map((device, index) => ({
-      name: device.name,
-      ip: device.ip,
-      type: device.type,
-      value: 1,
+    const activeDevices = this.devicesDetailStats()?.activeDevices ?? [];
+    const grouped = this.groupDevicesByType(activeDevices);
+    const total = grouped.reduce((sum, item) => sum + item.count, 0);
+    const chartEntries = grouped.map((entry, index) => ({
+      type: entry.type,
+      value: entry.count,
       color: ['#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#14b8a6', '#06b6d4'][index % 6],
     }));
 
@@ -235,7 +235,7 @@ export class DashboardComponent implements OnInit {
         toolbar: { show: false },
       },
       labels:
-        chartEntries.length > 0 ? chartEntries.map((entry) => entry.name) : ['No online devices'],
+        chartEntries.length > 0 ? chartEntries.map((entry) => entry.type) : ['No online devices'],
       colors: chartEntries.length > 0 ? chartEntries.map((entry) => entry.color) : ['#cbd5e1'],
       legend: { show: false },
       dataLabels: {
@@ -243,8 +243,6 @@ export class DashboardComponent implements OnInit {
         formatter: (value: number, { seriesIndex, w }: any) => {
           const label = w?.config?.labels?.[seriesIndex] ?? 'Device';
           const pct = w?.globals?.seriesTotals?.[seriesIndex] ?? 0;
-          const total =
-            w?.globals?.seriesTotals?.reduce((sum: number, item: number) => sum + item, 0) ?? 0;
           const percent = total > 0 ? ((pct / total) * 100).toFixed(0) : '0';
           return `${label} \n(${percent}%)`;
         },
@@ -265,11 +263,12 @@ export class DashboardComponent implements OnInit {
   });
 
   readonly offlineDeviceTypesChart = computed<ApexOptions>(() => {
-    const offlineDevices = (this.devicesDetailStats()?.offlineDevices ?? []).slice(0, 6);
-    const chartEntries = offlineDevices.map((device, index) => ({
-      name: device.name,
-      type: device.type,
-      value: 1,
+    const offlineDevices = this.devicesDetailStats()?.offlineDevices ?? [];
+    const grouped = this.groupDevicesByType(offlineDevices);
+    const total = grouped.reduce((sum, item) => sum + item.count, 0);
+    const chartEntries = grouped.map((entry, index) => ({
+      type: entry.type,
+      value: entry.count,
       color: ['#f97316', '#ef4444', '#f59e0b', '#06b6d4', '#a78bfa', '#f43f5e'][index % 6],
     }));
 
@@ -281,7 +280,7 @@ export class DashboardComponent implements OnInit {
         toolbar: { show: false },
       },
       labels:
-        chartEntries.length > 0 ? chartEntries.map((entry) => entry.name) : ['No offline devices'],
+        chartEntries.length > 0 ? chartEntries.map((entry) => entry.type) : ['No offline devices'],
       colors: chartEntries.length > 0 ? chartEntries.map((entry) => entry.color) : ['#cbd5e1'],
       legend: { show: false },
       dataLabels: {
@@ -289,8 +288,6 @@ export class DashboardComponent implements OnInit {
         formatter: (value: number, { seriesIndex, w }: any) => {
           const label = w?.config?.labels?.[seriesIndex] ?? 'Device';
           const pct = w?.globals?.seriesTotals?.[seriesIndex] ?? 0;
-          const total =
-            w?.globals?.seriesTotals?.reduce((sum: number, item: number) => sum + item, 0) ?? 0;
           const percent = total > 0 ? ((pct / total) * 100).toFixed(0) : '0';
           return `${label}\n(${percent}%)`;
         },

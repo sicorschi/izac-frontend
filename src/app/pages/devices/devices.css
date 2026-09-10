@@ -492,12 +492,22 @@
 }
 
 .wide-chart-label {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #64748b;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 700;
+  line-height: 1;
+}
+
+.wide-chart-label mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
 }
 
 .wide-chart-header h3 {
