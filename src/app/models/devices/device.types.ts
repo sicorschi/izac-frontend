@@ -13,4 +13,5 @@ export interface Device {
   lastSeen: string;
   createdAt: string;
   updatedAt: string;
+  timestamp?: string;
 }

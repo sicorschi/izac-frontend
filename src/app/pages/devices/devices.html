@@ -150,7 +150,9 @@
       <article class="wide-chart-card">
         <div class="wide-chart-header">
           <div>
-            <span class="wide-chart-label">Temperature</span>
+            <span class="wide-chart-label"
+              ><mat-icon aria-hidden="true">thermostat</mat-icon>Temperature</span
+            >
             <h3>Devices thermal overview</h3>
           </div>
           <span class="wide-chart-badge">Avg {{ getAverageTemperature() }}°C</span>
@@ -173,7 +175,9 @@
       <article class="wide-chart-card">
         <div class="wide-chart-header">
           <div>
-            <span class="wide-chart-label">Memory</span>
+            <span class="wide-chart-label">
+              <mat-icon aria-hidden="true">memory</mat-icon>Memory</span
+            >
             <h3>Devices memory overview</h3>
           </div>
           <span class="wide-chart-badge">Avg {{ getAverageMemory() }}%</span>
@@ -189,6 +193,31 @@
           [dataLabels]="memoryOverviewChart().dataLabels"
           [grid]="memoryOverviewChart().grid"
           [tooltip]="memoryOverviewChart().tooltip"
+          class="wide-chart"
+        ></apx-chart>
+      </article>
+
+      <article class="wide-chart-card">
+        <div class="wide-chart-header">
+          <div>
+            <span class="wide-chart-label">
+              <mat-icon aria-hidden="true">water_drop</mat-icon>Humidity</span
+            >
+            <h3>Devices humidity overview</h3>
+          </div>
+          <span class="wide-chart-badge">Avg {{ getAverageHumidity() }}%</span>
+        </div>
+
+        <apx-chart
+          [series]="humidityOverviewChart().series"
+          [chart]="humidityOverviewChart().chart"
+          [xaxis]="humidityOverviewChart().xaxis"
+          [yaxis]="humidityOverviewChart().yaxis"
+          [colors]="humidityOverviewChart().colors"
+          [plotOptions]="humidityOverviewChart().plotOptions"
+          [dataLabels]="humidityOverviewChart().dataLabels"
+          [grid]="humidityOverviewChart().grid"
+          [tooltip]="humidityOverviewChart().tooltip"
           class="wide-chart"
         ></apx-chart>
       </article>
